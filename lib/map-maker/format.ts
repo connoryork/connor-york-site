@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { FeatureCollection } from "geojson";
+import { featureCollectionSchema } from "./geojson";
 import { rewindFeatureCollection } from "./rewind";
 
 // The map file format. A map file is JSON describing one map:
@@ -24,13 +24,6 @@ const styleSchema = z.object({
   fill: z.string().default("none"),
 });
 
-// GeoJSON is a big standard, so we only check its outer shape here and trust the
-// geometry inside. (A bad coordinate just draws nothing; it can't crash us.)
-const geojsonSchema = z.object({
-  type: z.literal("FeatureCollection"),
-  features: z.array(z.object({ type: z.literal("Feature") }).loose()),
-});
-
 // A layer is one drawable thing. Today the only kind is "geojson"; the "type"
 // field lets us add other kinds later (e.g. "grid" for pixel maps) without
 // breaking existing files.
@@ -38,7 +31,7 @@ const layerSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("geojson"),
     name: z.string().optional(),
-    data: geojsonSchema,
+    data: featureCollectionSchema,
     style: styleSchema.default(styleSchema.parse({})),
   }),
 ]);
@@ -54,39 +47,43 @@ export const mapFileSchema = z.object({
 export type MapFile = z.infer<typeof mapFileSchema>;
 export type MapLayer = MapFile["layers"][number];
 
+// How many problems to list in an error message. A bad file can have thousands
+// (one per broken coordinate), and nobody wants to read them all.
+const MAX_ISSUES_SHOWN = 8;
+
+// Turn zod's issue list into short, readable lines, e.g.
+//   ✖ Invalid input: expected number, received string
+//     → at layers[0].data.features[3].geometry.coordinates[0][1]
+function describeIssues(error: z.ZodError): string {
+  const shown = error.issues.slice(0, MAX_ISSUES_SHOWN).map((issue) => {
+    const where = issue.path
+      .map((part) => (typeof part === "number" ? `[${part}]` : `.${String(part)}`))
+      .join("")
+      .replace(/^\./, "");
+    return `✖ ${issue.message}\n  → at ${where || "(top level)"}`;
+  });
+  const hidden = error.issues.length - shown.length;
+  if (hidden > 0) shown.push(`…and ${hidden} more problem(s).`);
+  return shown.join("\n");
+}
+
 // Turn unknown JSON (an import, or a file a user uploaded) into a typed MapFile.
-// Throws an error listing every problem if the file is invalid. Also fixes the
+// Throws an error listing the problems if the file is invalid. Also fixes the
 // direction of polygon rings (see rewind.ts) so files from other tools render
 // correctly.
 export function parseMapFile(json: unknown): MapFile {
   const result = mapFileSchema.safeParse(json);
   if (!result.success) {
-    throw new Error(`Invalid map file:\n${z.prettifyError(result.error)}`);
+    throw new Error(`Invalid map file:\n${describeIssues(result.error)}`);
   }
   const map = result.data;
 
-  try {
-    return {
-      ...map,
-      layers: map.layers.map((layer) => ({
-        ...layer,
-        // zod only checked the outer shape of "data", so TypeScript needs us to
-        // assert the type on the way in (layerGeoJson) and back out.
-        data: rewindFeatureCollection(
-          layerGeoJson(layer),
-        ) as unknown as typeof layer.data,
-      })),
-    };
-  } catch {
-    // The outer shape was valid but a shape inside has broken coordinates.
-    throw new Error(
-      "Invalid map file: a layer contains a shape with invalid coordinates.",
-    );
-  }
-}
-
-// zod only checked the outer shape of the GeoJSON, so TypeScript can't see it is
-// a full FeatureCollection. This helper is the one place we assert that.
-export function layerGeoJson(layer: MapLayer): FeatureCollection {
-  return layer.data as unknown as FeatureCollection;
+  // The shapes are fully validated by now, so rewinding can't fail.
+  return {
+    ...map,
+    layers: map.layers.map((layer) => ({
+      ...layer,
+      data: rewindFeatureCollection(layer.data),
+    })),
+  };
 }
