@@ -51,13 +51,15 @@ Open `/maps`, click "Open a map file", and pick
 browser and never uploaded anywhere. Invalid files show an error and leave the current map
 in place.
 
-## Known gotcha: polygon direction
+## Polygon direction
 
-The renderer (`d3-geo`) draws on a sphere, so it needs the **outside ring of each polygon to
-run clockwise** (as drawn with north up). The GeoJSON standard says counter-clockwise, so
-GeoJSON from other tools may need its rings reversed. A wrong-direction polygon is treated
-as "everything except this shape", so with a `fill` it floods the whole map. Outlines
-(`"fill": "none"`) look fine either way. A future change may fix rings automatically on load.
+The renderer (`d3-geo`) draws on a sphere and wants the outside ring of each polygon to run
+clockwise, while the GeoJSON standard says counter-clockwise. You don't need to care:
+`parseMapFile` reverses any polygon whose ring is the wrong way round (see
+`lib/map-maker/rewind.ts`), so GeoJSON from tools like geojson.io works as-is.
+
+Limitation: a single polygon larger than half the globe can't be told apart from a
+reversed one, so it would be flipped. Split such shapes into smaller polygons.
 
 ## Design notes
 
