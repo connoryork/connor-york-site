@@ -1,0 +1,60 @@
+/* The map plus the controls floating over it. */
+.frame {
+  position: relative;
+  width: 100%;
+}
+
+/* The draggable area around the map. */
+.canvas {
+  cursor: grab;
+  /* Without this, dragging would select text, and on touch screens the browser
+     would scroll or zoom the page instead of letting us pan the map. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  border-radius: 4px;
+}
+
+.canvas:focus-visible {
+  outline: 2px solid #e8e1d0;
+  outline-offset: 4px;
+}
+
+.dragging {
+  cursor: grabbing;
+}
+
+/* Buttons in the corner of the map. They sit beside the draggable area, not
+   inside it, so pressing one never starts a drag. */
+.controls {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.controlButton {
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: #d4a64a;
+  background: rgba(17, 17, 17, 0.85);
+  border: 1px solid #d4a64a;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.controlButton:hover:not(:disabled) {
+  background: rgba(212, 166, 74, 0.2);
+}
+
+.controlButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.controlButton:focus-visible {
+  outline: 2px solid #e8e1d0;
+  outline-offset: 2px;
+}
