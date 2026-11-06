@@ -15,6 +15,7 @@ export const projectionNames = [
   "naturalEarth",
   "equirectangular",
   "mercator",
+  "albersUsa",
 ] as const;
 
 // Style options with defaults: a file can omit any of these.
