@@ -19,6 +19,12 @@ export const library: LibraryEntry[] = [
     url: "/atlas/world.map.json",
   },
   {
+    id: "roman-mediterranean",
+    name: "Roman Mediterranean, c. 120 CE (schematic)",
+    description: "The Empire at its height, sketched from modern country shapes",
+    url: "/atlas/roman-mediterranean.map.json",
+  },
+  {
     id: "middle-east",
     name: "Middle East",
     description: "From Turkey and Egypt to Iran and Oman",
