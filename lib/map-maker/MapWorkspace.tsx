@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent } from "react";
-import MapViewer from "./MapViewer";
+import MapCanvas from "./MapCanvas";
 import styles from "./MapWorkspace.module.css";
 import { parseMapFile, type MapFile } from "./format";
 import { downloadMap } from "./download";
@@ -27,6 +27,10 @@ export default function MapWorkspace({
   const [map, setMap] = useState<MapFile>(initialMap);
   // Which library entry is showing; null when the map came from a user's file.
   const [selectedId, setSelectedId] = useState<string | null>(initialEntryId);
+  // Bumped each time a map is shown. It is used as the canvas's React "key": when
+  // a key changes React throws the old component away and starts a fresh one, so
+  // each newly shown map starts with the view reset (not panned).
+  const [mapKey, setMapKey] = useState(0);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,15 +40,23 @@ export default function MapWorkspace({
   // state) can be changed without re-rendering, which is what we want here.
   const latestRequest = useRef(0);
 
+  // Every way of showing a map goes through here, so the pieces that must change
+  // together (the map, which menu item is highlighted, the canvas key, any old
+  // error) can't get out of step.
+  function showMap(next: MapFile, entryId: string | null) {
+    setMap(next);
+    setSelectedId(entryId);
+    setMapKey((key) => key + 1);
+    setError(null);
+  }
+
   async function handleEntryChosen(entry: LibraryEntry) {
     const requestId = ++latestRequest.current;
 
     // The first map was already loaded by the server; no need to fetch it.
     if (entry.id === initialEntryId) {
-      setMap(initialMap);
-      setSelectedId(entry.id);
+      showMap(initialMap, entry.id);
       setLoadingId(null);
-      setError(null);
       return;
     }
 
@@ -64,9 +76,7 @@ export default function MapWorkspace({
       const loaded = parseMapFile(json);
 
       if (requestId !== latestRequest.current) return; // a newer choice won
-      setMap(loaded);
-      setSelectedId(entry.id);
-      setError(null);
+      showMap(loaded, entry.id);
     } catch (e) {
       if (requestId !== latestRequest.current) return;
       setError(e instanceof Error ? e.message : String(e));
@@ -97,9 +107,7 @@ export default function MapWorkspace({
       }
 
       // Same validation the server uses; throws a readable error if invalid.
-      setMap(parseMapFile(json));
-      setSelectedId(null);
-      setError(null);
+      showMap(parseMapFile(json), null);
     } catch (e) {
       // Keep showing the previous map and explain what went wrong.
       setError(e instanceof Error ? e.message : String(e));
@@ -182,7 +190,7 @@ export default function MapWorkspace({
       {/* The map file picks its own background color, so this one value is set
           inline; everything else about the layout lives in the CSS module. */}
       <main className={styles.stage} style={{ background: map.background }}>
-        <MapViewer map={map} />
+        <MapCanvas key={mapKey} map={map} />
       </main>
     </div>
   );
