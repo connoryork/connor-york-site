@@ -180,6 +180,7 @@
 /* The area to the right of the sidebar. Its background color comes from the
    map file, so it is set inline in the component. */
 .stage {
+  position: relative; /* the Layers panel is positioned against this */
   flex: 1;
   min-width: 0;
   display: flex;

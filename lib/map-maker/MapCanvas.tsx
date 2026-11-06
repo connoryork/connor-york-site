@@ -51,13 +51,15 @@ function toFrame(element: HTMLElement, clientX: number, clientY: number) {
 
 type MapCanvasProps = {
   map: MapFile;
+  // Positions of layers to leave out of the drawing.
+  hiddenLayers: ReadonlySet<number>;
 };
 
 // A map you can move around and zoom: drag, scroll, pinch, double-click, the
 // buttons, or the keyboard. It owns the "camera" (the view) and hands it to
 // MapViewer to draw. It is a client component because it needs state and event
 // handlers.
-export default function MapCanvas({ map }: MapCanvasProps) {
+export default function MapCanvas({ map, hiddenLayers }: MapCanvasProps) {
   const [view, setView] = useState<View>(IDENTITY_VIEW);
   const [dragging, setDragging] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -193,7 +195,7 @@ export default function MapCanvas({ map }: MapCanvasProps) {
         onDoubleClick={handleDoubleClick}
         onKeyDown={handleKeyDown}
       >
-        <MapViewer map={map} view={view} />
+        <MapViewer map={map} view={view} hiddenLayers={hiddenLayers} />
       </div>
 
       <div className={styles.controls}>
