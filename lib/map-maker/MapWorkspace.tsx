@@ -2,6 +2,7 @@
 
 import { useState, type ChangeEvent } from "react";
 import MapViewer from "./MapViewer";
+import styles from "./MapWorkspace.module.css";
 import { parseMapFile, type MapFile } from "./format";
 
 type MapWorkspaceProps = {
@@ -46,47 +47,54 @@ export default function MapWorkspace({ initialMap }: MapWorkspaceProps) {
   }
 
   return (
-    <main
-      style={{
-        background: map.background,
-        minHeight: "100vh",
-        padding: "2rem",
-        color: "#d4a64a",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          gap: "1rem",
-          alignItems: "center",
-          flexWrap: "wrap",
-          marginBottom: "1rem",
-        }}
-      >
-        <h1 style={{ fontSize: "1.25rem" }}>{map.name}</h1>
-        <label>
-          Open a map file:{" "}
-          <input type="file" accept=".json" onChange={handleFileChosen} />
-        </label>
-        <button type="button" onClick={() => setMap(initialMap)}>
-          Back to world map
-        </button>
-      </div>
+    <div className={styles.workspace}>
+      <aside className={styles.sidebar} aria-label="Map controls">
+        <h1 className={styles.brand}>Map Maker</h1>
 
-      {error && (
-        <pre
-          role="alert"
-          style={{
-            color: "#ff8a80",
-            whiteSpace: "pre-wrap",
-            marginBottom: "1rem",
-          }}
-        >
-          {error}
-        </pre>
-      )}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Current map</h2>
+          <p className={styles.mapName}>{map.name}</p>
+          <dl className={styles.facts}>
+            <dt>Projection</dt>
+            <dd>{map.projection}</dd>
+            <dt>Layers</dt>
+            <dd>{map.layers.length}</dd>
+          </dl>
+        </section>
 
-      <MapViewer map={map} />
-    </main>
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>File</h2>
+          {/* The <input> is visually hidden; clicking this label opens the file
+              picker, so we can style it like a button. */}
+          <label className={`${styles.button} ${styles.primary}`}>
+            Open a map file…
+            <input
+              className={styles.visuallyHidden}
+              type="file"
+              accept=".json"
+              onChange={handleFileChosen}
+            />
+          </label>
+          <button
+            type="button"
+            className={styles.button}
+            onClick={() => setMap(initialMap)}
+          >
+            Back to world map
+          </button>
+          {error && (
+            <pre role="alert" className={styles.error}>
+              {error}
+            </pre>
+          )}
+        </section>
+      </aside>
+
+      {/* The map file picks its own background color, so this one value is set
+          inline; everything else about the layout lives in the CSS module. */}
+      <main className={styles.stage} style={{ background: map.background }}>
+        <MapViewer map={map} />
+      </main>
+    </div>
   );
 }

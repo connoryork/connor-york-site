@@ -1,0 +1,150 @@
+/* A CSS Module: class names here are scoped to MapWorkspace.tsx. Importing the
+   file gives an object, so `styles.sidebar` becomes a unique generated class
+   name and can't clash with styles elsewhere in the site. */
+
+.workspace {
+  display: flex;
+  min-height: 100vh;
+  color: #e8e1d0;
+}
+
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 1.5rem 1.25rem;
+  background: #111111;
+  border-right: 1px solid #2a2a2a;
+}
+
+.brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d4a64a;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sectionTitle {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a8575;
+}
+
+.mapName {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.facts dt {
+  color: #8a8575;
+}
+
+.facts dd {
+  margin: 0;
+}
+
+/* Shared look for the two buttons. The first is a <label> (it wraps the file
+   input), the second a <button>, so we style a class instead of an element. */
+.button {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #d4a64a;
+  background: transparent;
+  border: 1px solid #d4a64a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 120ms;
+}
+
+.button:hover {
+  background: rgba(212, 166, 74, 0.14);
+}
+
+.primary {
+  color: #111111;
+  background: #d4a64a;
+  font-weight: 600;
+}
+
+.primary:hover {
+  background: #e3b95f;
+}
+
+/* The real file input stays in the page (so keyboard and screen-reader users can
+   still reach it) but is visually hidden; the label next to it acts as the
+   button. When the hidden input has focus, outline the whole label. */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.button:focus-within,
+.button:focus-visible {
+  outline: 2px solid #e8e1d0;
+  outline-offset: 2px;
+}
+
+.error {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  color: #ff8a80;
+  background: rgba(255, 138, 128, 0.08);
+  border: 1px solid rgba(255, 138, 128, 0.35);
+  border-radius: 6px;
+}
+
+/* The area to the right of the sidebar. Its background color comes from the
+   map file, so it is set inline in the component. */
+.stage {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.stage > * {
+  max-width: 1400px;
+}
+
+/* On narrow screens the sidebar becomes a bar across the top. */
+@media (max-width: 760px) {
+  .workspace {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid #2a2a2a;
+  }
+}
