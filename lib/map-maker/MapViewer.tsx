@@ -1,6 +1,7 @@
 import { geoPath } from "d3-geo";
 import type { MapFeatureCollection } from "./geojson";
 import type { MapFile } from "./format";
+import { boundsToPoints } from "./bounds";
 import { createProjection } from "./projections";
 
 type MapViewerProps = {
@@ -17,14 +18,15 @@ export default function MapViewer({
   width = 960,
   height = 500,
 }: MapViewerProps) {
-  // Fit the projection to ALL layers together so the whole map fills the box.
+  // By default, fit the projection to ALL layers together so the whole map fills
+  // the box. If the map file gives "bounds", frame that region instead.
   const everything: MapFeatureCollection = {
     type: "FeatureCollection",
     features: map.layers.flatMap((layer) => layer.data.features),
   };
   const projection = createProjection(map.projection).fitSize(
     [width, height],
-    everything,
+    map.bounds ? boundsToPoints(map.bounds) : everything,
   );
 
   // geoPath turns a GeoJSON shape into an SVG path string (the "d" attribute).
