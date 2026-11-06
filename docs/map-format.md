@@ -44,6 +44,15 @@ Every layer has a `type`. Only `"geojson"` exists today.
 | `data`  | yes      |                                               | A GeoJSON `FeatureCollection` (lon/lat). |
 | `style` | no       | stroke `#d4a64a`, strokeWidth `0.75`, fill `none` | Any subset of these may be given.    |
 
+## Shape validation
+
+Every shape in a layer's `data` is checked when the file loads: known geometry types
+(`Point`, `MultiPoint`, `LineString`, `MultiLineString`, `Polygon`, `MultiPolygon`,
+`GeometryCollection`), numeric `[longitude, latitude]` positions, lines with at least 2
+points, and polygon rings with at least 4 points that end where they start. A bad shape
+gives an error naming its location, such as
+`layers[0].data.features[3].geometry.coordinates`, and the current map stays on screen.
+
 ## Trying it
 
 Open `/maps`, click "Open a map file", and pick

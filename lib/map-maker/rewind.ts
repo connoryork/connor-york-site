@@ -1,5 +1,6 @@
 import { geoArea } from "d3-geo";
-import type { FeatureCollection, Geometry, Position } from "geojson";
+import type { Geometry, Position } from "geojson";
+import type { MapFeatureCollection } from "./geojson";
 
 // Why this file exists: the GeoJSON standard says a polygon's outer ring runs
 // counter-clockwise, but d3-geo (our renderer) wants it clockwise. Given a
@@ -42,8 +43,8 @@ function rewindGeometry(geometry: Geometry): Geometry {
 
 // Returns a corrected copy; the input is not modified.
 export function rewindFeatureCollection(
-  collection: FeatureCollection,
-): FeatureCollection {
+  collection: MapFeatureCollection,
+): MapFeatureCollection {
   return {
     ...collection,
     features: collection.features.map((feature) =>

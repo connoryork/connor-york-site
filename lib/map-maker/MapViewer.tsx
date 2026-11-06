@@ -1,6 +1,6 @@
 import { geoPath } from "d3-geo";
-import type { FeatureCollection } from "geojson";
-import { layerGeoJson, type MapFile } from "./format";
+import type { MapFeatureCollection } from "./geojson";
+import type { MapFile } from "./format";
 import { createProjection } from "./projections";
 
 type MapViewerProps = {
@@ -18,9 +18,9 @@ export default function MapViewer({
   height = 500,
 }: MapViewerProps) {
   // Fit the projection to ALL layers together so the whole map fills the box.
-  const everything: FeatureCollection = {
+  const everything: MapFeatureCollection = {
     type: "FeatureCollection",
-    features: map.layers.flatMap((layer) => layerGeoJson(layer).features),
+    features: map.layers.flatMap((layer) => layer.data.features),
   };
   const projection = createProjection(map.projection).fitSize(
     [width, height],
@@ -46,7 +46,7 @@ export default function MapViewer({
           strokeWidth={layer.style.strokeWidth}
           strokeLinejoin="round"
         >
-          {layerGeoJson(layer).features.map((feature, i) => (
+          {layer.data.features.map((feature, i) => (
             <path key={i} d={toPath(feature) ?? undefined} />
           ))}
         </g>
