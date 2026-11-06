@@ -20,7 +20,7 @@ export const library: LibraryEntry[] = [
   },
   {
     id: "roman-mediterranean",
-    name: "Roman Mediterranean, c. 120 CE (schematic)",
+    name: "Roman Mediterranean, c. AD 120 (schematic)",
     description: "The Empire at its height, sketched from modern country shapes",
     url: "/atlas/roman-mediterranean.map.json",
   },
