@@ -41,6 +41,62 @@
   color: #8a8575;
 }
 
+.libraryList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.libraryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 120ms;
+}
+
+.libraryItem:hover:not(:disabled) {
+  background: rgba(212, 166, 74, 0.1);
+}
+
+.libraryItem:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+/* Style the selected item by matching the aria-current attribute, so the
+   visual state and the accessible state can never disagree. */
+.libraryItem[aria-current="true"] {
+  border-color: #d4a64a;
+  background: rgba(212, 166, 74, 0.14);
+}
+
+.libraryItem:focus-visible {
+  outline: 2px solid #e8e1d0;
+  outline-offset: 2px;
+}
+
+.libraryName {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.libraryDescription {
+  font-size: 0.78rem;
+  color: #8a8575;
+}
+
 .mapName {
   font-size: 1.15rem;
   font-weight: 600;

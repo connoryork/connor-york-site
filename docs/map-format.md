@@ -1,6 +1,6 @@
 # Map file format (version 1)
 
-A map is one JSON file. The world map at `data/world.map.json` is the reference example.
+A map is one JSON file. The world map at `public/atlas/world.map.json` is the reference example.
 The schema lives in `lib/map-maker/format.ts`, which is the source of truth; this page
 is the human-readable summary.
 
@@ -57,10 +57,13 @@ gives an error naming its location, such as
 
 ## Trying it
 
-Open `/maps`, click "Open a map file", and pick
-[`examples/archipelago.map.json`](examples/archipelago.map.json). The file is read in your
-browser and never uploaded anywhere. Invalid files show an error and leave the current map
-in place.
+Open `/maps`. The built-in maps in `public/atlas/` are listed in the sidebar (the list
+itself is `lib/map-maker/library.ts`). To use your own, click "Open a map file" and pick a
+`.json` file: it is read in your browser and never uploaded anywhere. Invalid files show an
+error and leave the current map in place. "Download map" saves the current map back out
+as a file.
+
+To add a built-in map, put the file in `public/atlas/` and add an entry to `library.ts`.
 
 ## Polygon direction
 
