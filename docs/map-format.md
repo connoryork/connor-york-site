@@ -44,6 +44,21 @@ Every layer has a `type`. Only `"geojson"` exists today.
 | `data`  | yes      |                                               | A GeoJSON `FeatureCollection` (lon/lat). |
 | `style` | no       | stroke `#d4a64a`, strokeWidth `0.75`, fill `none` | Any subset of these may be given.    |
 
+## Trying it
+
+Open `/maps`, click "Open a map file", and pick
+[`examples/archipelago.map.json`](examples/archipelago.map.json). The file is read in your
+browser and never uploaded anywhere. Invalid files show an error and leave the current map
+in place.
+
+## Known gotcha: polygon direction
+
+The renderer (`d3-geo`) draws on a sphere, so it needs the **outside ring of each polygon to
+run clockwise** (as drawn with north up). The GeoJSON standard says counter-clockwise, so
+GeoJSON from other tools may need its rings reversed. A wrong-direction polygon is treated
+as "everything except this shape", so with a `fill` it floods the whole map. Outlines
+(`"fill": "none"`) look fine either way. A future change may fix rings automatically on load.
+
 ## Design notes
 
 - **Self-contained:** the geometry is embedded, so one file is one whole map. That makes
