@@ -1,5 +1,5 @@
 // Builds public/atlas/roman-mediterranean.map.json: a SCHEMATIC map of the Roman
-// Mediterranean around 120 CE.
+// Mediterranean around AD 120.
 //
 // Run from the project root:   npx tsx scripts/build-antiquity-map.ts
 //
@@ -9,7 +9,7 @@
 // cut down to a rough box (for example Britain south of Hadrian's Wall). So the
 // borders are approximate and meant to convey extent, not exact ancient frontiers.
 // The choices below (which countries, which boxes) were made from general
-// knowledge of the Empire at the death of Trajan / start of Hadrian, c. 117-120 CE.
+// knowledge of the Empire at the death of Trajan / start of Hadrian, c. AD 117-120.
 
 import { writeFileSync } from "node:fs";
 import { parseMapFile } from "../lib/map-maker/format";
@@ -112,7 +112,7 @@ async function main() {
   // parseMapFile checks everything and also puts polygon rings the way d3 wants.
   const map = parseMapFile({
     version: 1,
-    name: "Roman Mediterranean, c. 120 CE (schematic)",
+    name: "Roman Mediterranean, c. AD 120 (schematic)",
     projection: "mercator",
     background: "#07101c",
     bounds: BOUNDS,
