@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent } from "react";
+import LayersPanel from "./LayersPanel";
 import MapCanvas from "./MapCanvas";
 import styles from "./MapWorkspace.module.css";
 import { parseMapFile, type MapFile } from "./format";
@@ -31,6 +32,9 @@ export default function MapWorkspace({
   // a key changes React throws the old component away and starts a fresh one, so
   // each newly shown map starts with the view reset (not panned).
   const [mapKey, setMapKey] = useState(0);
+  // Which layers (by position in map.layers) are switched off. A Set, because the
+  // question we ask is "is this one hidden?".
+  const [hiddenLayers, setHiddenLayers] = useState<ReadonlySet<number>>(new Set());
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +51,18 @@ export default function MapWorkspace({
     setMap(next);
     setSelectedId(entryId);
     setMapKey((key) => key + 1);
+    setHiddenLayers(new Set()); // a different map starts with every layer showing
     setError(null);
+  }
+
+  function toggleLayer(index: number) {
+    setHiddenLayers((current) => {
+      // Never edit the old Set: make a copy, change the copy, return it.
+      const next = new Set(current);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
   }
 
   async function handleEntryChosen(entry: LibraryEntry) {
@@ -190,7 +205,14 @@ export default function MapWorkspace({
       {/* The map file picks its own background color, so this one value is set
           inline; everything else about the layout lives in the CSS module. */}
       <main className={styles.stage} style={{ background: map.background }}>
-        <MapCanvas key={mapKey} map={map} />
+        {/* Keyed like the canvas, so a newly shown map gets a closed panel. */}
+        <LayersPanel
+          key={mapKey}
+          layers={map.layers}
+          hidden={hiddenLayers}
+          onToggle={toggleLayer}
+        />
+        <MapCanvas key={`canvas-${mapKey}`} map={map} hiddenLayers={hiddenLayers} />
       </main>
     </div>
   );

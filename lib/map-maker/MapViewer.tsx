@@ -10,9 +10,15 @@ type MapViewerProps = {
   map: MapFile;
   // Where the map sits in its frame (see view.ts). Defaults to "as fitted".
   view?: View;
+  // Positions (in map.layers) of layers to leave out of the drawing.
+  hiddenLayers?: ReadonlySet<number>;
   width?: number;
   height?: number;
 };
+
+// Used when no layers are hidden. Defined once, outside the component, so it isn't
+// re-created on every render.
+const NO_LAYERS: ReadonlySet<number> = new Set();
 
 // Draws a map file as SVG. It holds no state: it draws whatever map and view it
 // is given, so it works on the server or in the browser, and MapCanvas decides
@@ -20,11 +26,13 @@ type MapViewerProps = {
 export default function MapViewer({
   map,
   view = IDENTITY_VIEW,
+  hiddenLayers = NO_LAYERS,
   width = MAP_WIDTH,
   height = MAP_HEIGHT,
 }: MapViewerProps) {
   // By default, fit the projection to ALL layers together so the whole map fills
-  // the box. If the map file gives "bounds", frame that region instead.
+  // the box. If the map file gives "bounds", frame that region instead. Hidden
+  // layers still count here, so hiding one never changes how the map is framed.
   const everything: MapFeatureCollection = {
     type: "FeatureCollection",
     features: map.layers.flatMap((layer) => layer.data.features),
@@ -47,22 +55,25 @@ export default function MapViewer({
       {/* The "camera": one transform on this group moves everything inside it,
           so panning never has to redraw or recompute any shapes. */}
       <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
-        {map.layers.map((layer, layerIndex) => (
-          // One <g> (group) per layer, drawn in file order: later layers on top.
-          <g
-            key={layerIndex}
-            fill={layer.style.fill}
-            stroke={layer.style.stroke}
-            // Divide by the zoom so lines keep the same on-screen thickness
-            // instead of swelling as the map is magnified.
-            strokeWidth={layer.style.strokeWidth / view.k}
-            strokeLinejoin="round"
-          >
-            {layer.data.features.map((feature, i) => (
-              <path key={i} d={toPath(feature) ?? undefined} />
-            ))}
-          </g>
-        ))}
+        {map.layers.map((layer, layerIndex) => {
+          if (hiddenLayers.has(layerIndex)) return null;
+          return (
+            // One <g> (group) per layer, drawn in file order: later layers on top.
+            <g
+              key={layerIndex}
+              fill={layer.style.fill}
+              stroke={layer.style.stroke}
+              // Divide by the zoom so lines keep the same on-screen thickness
+              // instead of swelling as the map is magnified.
+              strokeWidth={layer.style.strokeWidth / view.k}
+              strokeLinejoin="round"
+            >
+              {layer.data.features.map((feature, i) => (
+                <path key={i} d={toPath(feature) ?? undefined} />
+              ))}
+            </g>
+          );
+        })}
       </g>
     </svg>
   );
