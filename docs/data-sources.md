@@ -7,6 +7,7 @@ The built-in maps in `public/atlas/` come from these sources.
 | World | [Natural Earth](https://www.naturalearthdata.com) 1:110m "Land" | Public domain |
 | Middle East | [Natural Earth](https://www.naturalearthdata.com) 1:50m "Admin 0 - Countries", 34 countries | Public domain |
 | United States | [Natural Earth](https://www.naturalearthdata.com) 1:50m "Admin 1 - States, Provinces", filtered to the US | Public domain |
+| Site icon (`app/icon.svg`) | Drawn by `scripts/build-icon.ts` from the World map above | Public domain data; drawing made for this project |
 | Archipelago | Made up for this project | n/a |
 
 The US and Middle East maps are built by `scripts/build-usa-map.ts` and
