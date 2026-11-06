@@ -36,11 +36,26 @@ const layerSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
+// Where to point the camera: [west, south, east, north] in degrees. Optional;
+// without it the map frames all of its shapes. The box can't cross the
+// antimeridian (the 180° line), so west must be less than east.
+const boundsSchema = z
+  .tuple([
+    z.number().min(-180).max(180),
+    z.number().min(-90).max(90),
+    z.number().min(-180).max(180),
+    z.number().min(-90).max(90),
+  ])
+  .refine(([west, south, east, north]) => west < east && south < north, {
+    message: "bounds must be [west, south, east, north], with west < east and south < north",
+  });
+
 export const mapFileSchema = z.object({
   version: z.literal(1),
   name: z.string(),
   projection: z.enum(projectionNames).default("naturalEarth"),
   background: z.string().default("#000000"),
+  bounds: boundsSchema.optional(),
   layers: z.array(layerSchema).min(1),
 });
 

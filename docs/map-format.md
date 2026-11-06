@@ -10,6 +10,7 @@ is the human-readable summary.
   "name": "World",
   "projection": "naturalEarth",
   "background": "#000000",
+  "bounds": [-40, -25, 50, 30],
   "layers": [
     {
       "type": "geojson",
@@ -29,6 +30,7 @@ is the human-readable summary.
 | `name`       | yes      |                  | Shown as the map's accessible label.               |
 | `projection` | no       | `"naturalEarth"` | One of `naturalEarth`, `equirectangular`, `mercator`. |
 | `background` | no       | `"#000000"`      | Any CSS color.                                     |
+| `bounds`     | no       | all shapes       | `[west, south, east, north]` in degrees: the region to frame. West must be less than east (no crossing the 180° line). `mercator` can't show beyond about ±85° latitude. |
 | `layers`     | yes      |                  | At least one. Drawn in order, later on top.        |
 
 ## Layers

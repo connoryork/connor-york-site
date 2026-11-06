@@ -3,6 +3,7 @@
   "name": "Archipelago (example)",
   "projection": "equirectangular",
   "background": "#0b1d3a",
+  "bounds": [-40, -25, 50, 30],
   "layers": [
     {
       "type": "geojson",
