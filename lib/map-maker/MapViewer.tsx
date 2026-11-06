@@ -53,7 +53,9 @@ export default function MapViewer({
             key={layerIndex}
             fill={layer.style.fill}
             stroke={layer.style.stroke}
-            strokeWidth={layer.style.strokeWidth}
+            // Divide by the zoom so lines keep the same on-screen thickness
+            // instead of swelling as the map is magnified.
+            strokeWidth={layer.style.strokeWidth / view.k}
             strokeLinejoin="round"
           >
             {layer.data.features.map((feature, i) => (
