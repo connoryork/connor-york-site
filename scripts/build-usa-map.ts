@@ -11,40 +11,14 @@
 import { writeFileSync } from "node:fs";
 import { parseMapFile } from "../lib/map-maker/format";
 import { serializeMap } from "../lib/map-maker/download";
+import { cleanGeometry } from "./geo-clean";
 
 const SOURCE =
   "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_1_states_provinces.geojson";
 
-type Ring = number[][];
-
 // Three decimal places is about 100 m: far finer than a national map needs, and
 // it makes the file much smaller than the source's long decimals.
-const round = (n: number) => Math.round(n * 1000) / 1000;
-
-// Round a ring's points, drop repeated neighbours the rounding created, and make
-// sure it still closes. Returns null if too little is left to be a polygon ring.
-function cleanRing(ring: Ring): Ring | null {
-  const points: Ring = [];
-  for (const [lon, lat] of ring) {
-    const point = [round(lon), round(lat)];
-    const previous = points[points.length - 1];
-    if (!previous || previous[0] !== point[0] || previous[1] !== point[1]) {
-      points.push(point);
-    }
-  }
-  const first = points[0];
-  const last = points[points.length - 1];
-  if (first[0] !== last[0] || first[1] !== last[1]) points.push([...first]);
-  return points.length >= 4 ? points : null;
-}
-
-// rings = [outer ring, ...holes]
-function cleanPolygon(rings: Ring[]): Ring[] | null {
-  const outer = cleanRing(rings[0]);
-  if (!outer) return null;
-  const holes = rings.slice(1).map(cleanRing).filter((r): r is Ring => r !== null);
-  return [outer, ...holes];
-}
+const DECIMALS = 3;
 
 async function main() {
   const response = await fetch(SOURCE);
@@ -52,26 +26,18 @@ async function main() {
   const source = (await response.json()) as {
     features: {
       properties: { name: string; adm0_a3: string };
-      geometry: { type: string; coordinates: Ring[] | Ring[][] };
+      geometry: { type: string; coordinates: unknown };
     }[];
   };
 
   const features = source.features
     .filter((f) => f.properties.adm0_a3 === "USA")
     .flatMap((f) => {
-      const { type, coordinates } = f.geometry;
-      let geometry;
-      if (type === "Polygon") {
-        const polygon = cleanPolygon(coordinates as Ring[]);
-        geometry = polygon && { type: "Polygon", coordinates: polygon };
-      } else {
-        const polygons = (coordinates as Ring[][])
-          .map(cleanPolygon)
-          .filter((p): p is Ring[] => p !== null);
-        geometry = polygons.length > 0 && { type: "MultiPolygon", coordinates: polygons };
-      }
+      const geometry = cleanGeometry(f.geometry, DECIMALS);
       // Keep only the state's name; the source has about 80 other fields.
-      return geometry ? [{ type: "Feature", properties: { name: f.properties.name }, geometry }] : [];
+      return geometry
+        ? [{ type: "Feature", properties: { name: f.properties.name }, geometry }]
+        : [];
     });
 
   // parseMapFile checks everything and also puts polygon rings the way d3 wants.
@@ -92,7 +58,9 @@ async function main() {
 
   const text = serializeMap(map);
   writeFileSync("public/atlas/usa.map.json", text);
-  console.log(`Wrote public/atlas/usa.map.json: ${features.length} states, ${(text.length / 1024).toFixed(0)} KB`);
+  console.log(
+    `Wrote public/atlas/usa.map.json: ${features.length} states, ${(text.length / 1024).toFixed(0)} KB`,
+  );
 }
 
 main();

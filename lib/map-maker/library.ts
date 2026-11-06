@@ -19,6 +19,12 @@ export const library: LibraryEntry[] = [
     url: "/atlas/world.map.json",
   },
   {
+    id: "middle-east",
+    name: "Middle East",
+    description: "From Turkey and Egypt to Iran and Oman",
+    url: "/atlas/middle-east.map.json",
+  },
+  {
     id: "usa",
     name: "United States",
     description: "The 50 states and DC, Alaska and Hawaii as insets",
