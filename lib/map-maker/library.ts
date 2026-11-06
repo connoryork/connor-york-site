@@ -19,6 +19,12 @@ export const library: LibraryEntry[] = [
     url: "/atlas/world.map.json",
   },
   {
+    id: "usa",
+    name: "United States",
+    description: "The 50 states and DC, Alaska and Hawaii as insets",
+    url: "/atlas/usa.map.json",
+  },
+  {
     id: "archipelago",
     name: "Archipelago (example)",
     description: "A small made-up map with filled islands",

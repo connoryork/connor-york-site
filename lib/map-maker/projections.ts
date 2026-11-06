@@ -1,4 +1,5 @@
 import {
+  geoAlbersUsa,
   geoEquirectangular,
   geoMercator,
   geoNaturalEarth1,
@@ -13,6 +14,7 @@ const projections: Record<MapFile["projection"], () => GeoProjection> = {
   naturalEarth: geoNaturalEarth1, // balanced look, similar to many atlases
   equirectangular: geoEquirectangular, // lon/lat used directly as x/y
   mercator: geoMercator, // the web-map classic; Antarctica gets stretched
+  albersUsa: geoAlbersUsa, // the United States only, with Alaska and Hawaii as insets
 };
 
 export function createProjection(name: MapFile["projection"]): GeoProjection {

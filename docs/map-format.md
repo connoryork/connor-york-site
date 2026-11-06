@@ -28,7 +28,7 @@ is the human-readable summary.
 | ------------ | -------- | ---------------- | -------------------------------------------------- |
 | `version`    | yes      |                  | Must be `1`. Lets us change the format later.      |
 | `name`       | yes      |                  | Shown as the map's accessible label.               |
-| `projection` | no       | `"naturalEarth"` | One of `naturalEarth`, `equirectangular`, `mercator`. |
+| `projection` | no       | `"naturalEarth"` | One of `naturalEarth`, `equirectangular`, `mercator`, `albersUsa`. `albersUsa` draws only US territory (Alaska and Hawaii as insets) and can't be combined with `bounds`. |
 | `background` | no       | `"#000000"`      | Any CSS color.                                     |
 | `bounds`     | no       | all shapes       | `[west, south, east, north]` in degrees: the region to frame. West must be less than east (no crossing the 180° line). `mercator` can't show beyond about ±85° latitude. |
 | `layers`     | yes      |                  | At least one. Drawn in order, later on top.        |
