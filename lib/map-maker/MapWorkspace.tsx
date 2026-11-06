@@ -4,6 +4,7 @@ import { useState, type ChangeEvent } from "react";
 import MapViewer from "./MapViewer";
 import styles from "./MapWorkspace.module.css";
 import { parseMapFile, type MapFile } from "./format";
+import { downloadMap } from "./download";
 
 type MapWorkspaceProps = {
   // The map to show until the user loads one of their own.
@@ -75,6 +76,13 @@ export default function MapWorkspace({ initialMap }: MapWorkspaceProps) {
               onChange={handleFileChosen}
             />
           </label>
+          <button
+            type="button"
+            className={styles.button}
+            onClick={() => downloadMap(map)}
+          >
+            Download map
+          </button>
           <button
             type="button"
             className={styles.button}
