@@ -1,0 +1,140 @@
+/* The row of buttons in the top-right corner of the map area, and the pieces they
+   share: round-cornered buttons, and the dropdown panels that open under them. */
+
+.toolbar {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10; /* above the map */
+  display: flex;
+  flex-wrap: wrap; /* on a narrow screen the row wraps instead of overflowing */
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 0.4rem;
+  max-width: calc(100% - 1.5rem);
+}
+
+/* Wraps a button together with its dropdown, so the panel can be positioned
+   against the button. */
+.root {
+  position: relative;
+}
+
+/* A button with text, like "Layers 3/3" */
+.button,
+.iconButton {
+  display: flex;
+  align-items: center;
+  font: inherit;
+  color: #d4a64a;
+  background: rgba(17, 17, 17, 0.9);
+  border: 1px solid #d4a64a;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button {
+  gap: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* A square button holding just an icon */
+.iconButton {
+  justify-content: center;
+  box-sizing: border-box;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+}
+
+.iconButton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.button:hover,
+.iconButton:hover,
+.button[aria-expanded="true"],
+.iconButton[aria-expanded="true"] {
+  background: rgba(212, 166, 74, 0.2);
+}
+
+/* Show a focus ring for keyboard users. :focus-within also covers the Upload
+   button, which is a <label> around a visually hidden file input. */
+.button:focus-visible,
+.iconButton:focus-visible,
+.iconButton:focus-within {
+  outline: 2px solid #e8e1d0;
+  outline-offset: 2px;
+}
+
+/* A gentle pulse while something is loading */
+.busy {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Hidden from the eye but still read by screen readers and reachable by keyboard
+   (display: none would remove it from both). */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The dropdown panel under a button */
+.panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  width: max-content;
+  min-width: 14rem;
+  max-width: min(22rem, 80vw);
+  padding: 0.7rem 0.85rem;
+  background: #111111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+.panelTitle {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a8575;
+}
+
+/* On a phone there is no room for a dropdown hanging off one small button (it
+   would run off the edge of the screen). So below 600px wide the toolbar spans the
+   screen, and each panel stretches across it, just under the row of buttons.
+   Setting .root to position: static makes the panel measure itself against the
+   toolbar (which is positioned) instead of against its own button. */
+@media (max-width: 600px) {
+  .toolbar {
+    left: 0.75rem;
+    max-width: none;
+  }
+
+  .root {
+    position: static;
+  }
+
+  .panel {
+    left: 0;
+    right: 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+}

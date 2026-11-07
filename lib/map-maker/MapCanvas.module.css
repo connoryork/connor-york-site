@@ -2,6 +2,7 @@
 .frame {
   position: relative;
   width: 100%;
+  max-width: 1400px;
 }
 
 /* The draggable area around the map. */

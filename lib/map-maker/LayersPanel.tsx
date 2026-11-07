@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
 import type { MapLayer } from "./format";
+import { usePopover } from "./usePopover";
+import toolbar from "./Toolbar.module.css";
 import styles from "./LayersPanel.module.css";
 
 type LayersPanelProps = {
@@ -12,48 +13,20 @@ type LayersPanelProps = {
 };
 
 // A "Layers" button that opens a small panel with one checkbox per layer. It is a
-// popover, not a blocking dialog: the map stays usable behind it, and it closes on
-// Escape, on a second click of the button, or on a click anywhere outside it.
+// popover, not a blocking dialog: the map stays usable behind it. The opening and
+// closing (Escape, outside click) comes from the shared usePopover hook.
 export default function LayersPanel({ layers, hidden, onToggle }: LayersPanelProps) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  const firstCheckboxRef = useRef<HTMLInputElement>(null);
-  // A unique id so the button can say which element it controls.
-  const panelId = useId();
-
-  // While the panel is open: close on Escape or on a press outside it, and move
-  // keyboard focus into it so it can be used without a mouse.
-  useEffect(() => {
-    if (!open) return;
-    firstCheckboxRef.current?.focus();
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-        toggleRef.current?.focus(); // put focus back where it came from
-      }
-    }
-    function handlePointerDown(event: PointerEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("pointerdown", handlePointerDown);
-    };
-  }, [open]);
+  const { open, setOpen, rootRef, toggleRef, focusRef, panelId } =
+    usePopover<HTMLInputElement>();
 
   const visibleCount = layers.length - hidden.size;
 
   return (
-    <div className={styles.root} ref={rootRef}>
+    <div className={toolbar.root} ref={rootRef}>
       <button
         type="button"
         ref={toggleRef}
-        className={styles.toggle}
+        className={toolbar.button}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={panelId}
@@ -66,8 +39,8 @@ export default function LayersPanel({ layers, hidden, onToggle }: LayersPanelPro
       </button>
 
       {open && (
-        <div id={panelId} className={styles.panel} role="dialog" aria-label="Layers">
-          <h2 className={styles.title}>Layers</h2>
+        <div id={panelId} className={toolbar.panel} role="dialog" aria-label="Layers">
+          <h2 className={toolbar.panelTitle}>Layers</h2>
           <ul className={styles.list}>
             {/* Listed top layer first, like the layers panel in a design tool.
                 Each item remembers its real position (index) in the map. */}
@@ -79,7 +52,7 @@ export default function LayersPanel({ layers, hidden, onToggle }: LayersPanelPro
                   <label className={styles.item}>
                     <input
                       type="checkbox"
-                      ref={row === 0 ? firstCheckboxRef : undefined}
+                      ref={row === 0 ? focusRef : undefined}
                       checked={!hidden.has(index)}
                       onChange={() => onToggle(index)}
                     />

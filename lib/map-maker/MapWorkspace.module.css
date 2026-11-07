@@ -9,11 +9,11 @@
 }
 
 .sidebar {
-  width: 280px;
+  width: 240px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 1.5rem;
   padding: 1.5rem 1.25rem;
   background: #111111;
   border-right: 1px solid #2a2a2a;
@@ -41,62 +41,6 @@
   color: #8a8575;
 }
 
-.libraryList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.libraryItem {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  width: 100%;
-  padding: 0.55rem 0.75rem;
-  font: inherit;
-  text-align: left;
-  color: inherit;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 120ms;
-}
-
-.libraryItem:hover:not(:disabled) {
-  background: rgba(212, 166, 74, 0.1);
-}
-
-.libraryItem:disabled {
-  cursor: progress;
-  opacity: 0.6;
-}
-
-/* Style the selected item by matching the aria-current attribute, so the
-   visual state and the accessible state can never disagree. */
-.libraryItem[aria-current="true"] {
-  border-color: #d4a64a;
-  background: rgba(212, 166, 74, 0.14);
-}
-
-.libraryItem:focus-visible {
-  outline: 2px solid #e8e1d0;
-  outline-offset: 2px;
-}
-
-.libraryName {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.libraryDescription {
-  font-size: 0.78rem;
-  color: #8a8575;
-}
-
 .mapName {
   font-size: 1.15rem;
   font-weight: 600;
@@ -117,70 +61,10 @@
   margin: 0;
 }
 
-/* Shared look for the two buttons. The first is a <label> (it wraps the file
-   input), the second a <button>, so we style a class instead of an element. */
-.button {
-  display: block;
-  width: 100%;
-  padding: 0.6rem 0.9rem;
-  font: inherit;
-  font-size: 0.9rem;
-  text-align: center;
-  color: #d4a64a;
-  background: transparent;
-  border: 1px solid #d4a64a;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 120ms;
-}
-
-.button:hover {
-  background: rgba(212, 166, 74, 0.14);
-}
-
-.primary {
-  color: #111111;
-  background: #d4a64a;
-  font-weight: 600;
-}
-
-.primary:hover {
-  background: #e3b95f;
-}
-
-/* The real file input stays in the page (so keyboard and screen-reader users can
-   still reach it) but is visually hidden; the label next to it acts as the
-   button. When the hidden input has focus, outline the whole label. */
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.button:focus-within,
-.button:focus-visible {
-  outline: 2px solid #e8e1d0;
-  outline-offset: 2px;
-}
-
-.error {
-  margin: 0;
-  padding: 0.7rem 0.8rem;
-  font-size: 0.8rem;
-  white-space: pre-wrap;
-  color: #ff8a80;
-  background: rgba(255, 138, 128, 0.08);
-  border: 1px solid rgba(255, 138, 128, 0.35);
-  border-radius: 6px;
-}
-
 /* The area to the right of the sidebar. Its background color comes from the
    map file, so it is set inline in the component. */
 .stage {
-  position: relative; /* the Layers panel is positioned against this */
+  position: relative; /* the toolbar and error message are positioned against this */
   flex: 1;
   min-width: 0;
   display: flex;
@@ -189,8 +73,49 @@
   padding: 2rem;
 }
 
-.stage > * {
-  max-width: 1400px;
+/* A problem message (a bad file, or a map that could not be loaded) under the
+   toolbar. */
+.errorToast {
+  position: absolute;
+  top: 3.6rem;
+  right: 0.75rem;
+  z-index: 9;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  max-width: min(28rem, calc(100% - 1.5rem));
+  padding: 0.7rem 0.8rem;
+  background: #1a1111;
+  border: 1px solid rgba(255, 138, 128, 0.5);
+  border-radius: 6px;
+}
+
+.errorText {
+  margin: 0;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  color: #ff8a80;
+}
+
+.dismiss {
+  flex-shrink: 0;
+  padding: 0 0.3rem;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1.2;
+  color: #ff8a80;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dismiss:hover {
+  background: rgba(255, 138, 128, 0.15);
+}
+
+.dismiss:focus-visible {
+  outline: 2px solid #e8e1d0;
 }
 
 /* On narrow screens the sidebar becomes a bar across the top. */

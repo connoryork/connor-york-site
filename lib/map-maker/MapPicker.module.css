@@ -1,0 +1,71 @@
+/* The contents of the Maps dropdown. The button and the panel itself come from the
+   shared Toolbar.module.css. */
+
+.wide {
+  width: 20rem;
+  max-width: min(24rem, 85vw);
+}
+
+/* On a phone the panel stretches across the screen (see Toolbar.module.css). */
+@media (max-width: 600px) {
+  .wide {
+    width: auto;
+    max-width: none;
+  }
+}
+
+/* The scroller: the list can be as long as we like, but the dropdown never grows
+   past 60% of the window; beyond that it scrolls. */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0 0.15rem 0 0;
+  list-style: none;
+  max-height: min(60vh, 26rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3d3524 transparent;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+  text-align: left;
+  color: #e8e1d0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: rgba(212, 166, 74, 0.1);
+}
+
+/* Style the selected item by matching the aria-current attribute, so the visual
+   state and the accessible state can never disagree. */
+.item[aria-current="true"] {
+  border-color: #d4a64a;
+  background: rgba(212, 166, 74, 0.14);
+}
+
+.item:focus-visible {
+  outline: 2px solid #e8e1d0;
+  outline-offset: -2px;
+}
+
+.name {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 0.76rem;
+  color: #8a8575;
+}
