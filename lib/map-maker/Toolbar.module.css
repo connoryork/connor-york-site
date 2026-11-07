@@ -12,6 +12,13 @@
   align-items: flex-start;
   gap: 0.4rem;
   max-width: calc(100% - 1.5rem);
+  /* The row itself is transparent to the mouse, so dragging the map through the
+     gaps still works. Its children turn clicks back on (next rule). */
+  pointer-events: none;
+}
+
+.toolbar > * {
+  pointer-events: auto;
 }
 
 /* Wraps a button together with its dropdown, so the panel can be positioned
@@ -136,5 +143,14 @@
     width: auto;
     min-width: 0;
     max-width: none;
+  }
+}
+
+/* On the very narrowest phones (about 340px and under) the title and the toolbar
+   no longer fit side by side, so the toolbar drops to a second row under the
+   title instead of running over it. */
+@media (max-width: 340px) {
+  .toolbar {
+    top: 3.4rem;
   }
 }

@@ -57,11 +57,17 @@ gives an error naming its location, such as
 
 ## Trying it
 
-Open `/maps`. The built-in maps in `public/atlas/` are listed in the sidebar (the list
-itself is `lib/map-maker/library.ts`). To use your own, click "Open a map file" and pick a
-`.json` file: it is read in your browser and never uploaded anywhere. Invalid files show an
-error and leave the current map in place. "Download map" saves the current map back out
-as a file.
+Open `/maps`. The whole window is the map, with controls in the top right:
+
+- **Map icon**: a scrolling list of the built-in maps in `public/atlas/` (the list
+  itself is `lib/map-maker/library.ts`).
+- **Layers**: tick layers on and off (a view setting only; it doesn't change the file).
+- **Upload icon**: open your own `.json` map file. It is read in your browser and never
+  uploaded anywhere. Invalid files show an error and leave the current map in place.
+- **Download icon**: save the current map back out as a file.
+
+Drag to pan; scroll, pinch or double-click to zoom; the arrow keys, `+`, `-` and `0` work
+when the map has focus.
 
 To add a built-in map, put the file in `public/atlas/` and add an entry to `library.ts`.
 
