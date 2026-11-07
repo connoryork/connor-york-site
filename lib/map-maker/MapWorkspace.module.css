@@ -1,76 +1,82 @@
 /* A CSS Module: class names here are scoped to MapWorkspace.tsx. Importing the
-   file gives an object, so `styles.sidebar` becomes a unique generated class
+   file gives an object, so `styles.workspace` becomes a unique generated class
    name and can't clash with styles elsewhere in the site. */
 
+/* The whole window is the map: fixed to all four edges of the screen, with no page
+   scrolling. Everything else is a small overlay floating on top of it. The
+   background color comes from the map file, so it is set inline in the component. */
 .workspace {
-  display: flex;
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
   color: #e8e1d0;
 }
 
-.sidebar {
-  width: 240px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1.5rem 1.25rem;
-  background: #111111;
-  border-right: 1px solid #2a2a2a;
+/* The two text overlays below are only for reading, so they let the mouse "fall
+   through" to the map (pointer-events: none): dragging or scrolling over them still
+   moves the map. The text-shadow keeps them readable whatever is under them. */
+.brand,
+.mapInfo {
+  position: absolute;
+  z-index: 10; /* above the map */
+  margin: 0;
+  pointer-events: none;
+  text-shadow: 0 0 6px #000, 0 0 2px #000;
 }
 
+/* Top left: the app's name. Its height matches the toolbar's buttons so the two
+   line up across the top of the screen. */
 .brand {
-  font-size: 1.1rem;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  align-items: center;
+  height: 2.35rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #d4a64a;
 }
 
-.section {
+/* Bottom left: the current map. */
+.mapInfo {
+  left: 0.75rem;
+  bottom: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.1rem;
 }
 
-.sectionTitle {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #8a8575;
+/* In development only, Next.js draws a round badge in this corner, so the note
+   shifts right to sit beside it (see IS_DEV in the component). */
+.clearOfDevBadge {
+  left: 3.6rem;
 }
 
 .mapName {
-  font-size: 1.15rem;
+  font-size: 0.78rem;
   font-weight: 600;
+  color: #e8e1d0;
 }
 
-.facts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.25rem 0.9rem;
-  font-size: 0.85rem;
-}
-
-.facts dt {
+.mapProjection {
+  font-size: 0.68rem;
   color: #8a8575;
 }
 
-.facts dd {
-  margin: 0;
-}
+/* On a phone the zoom controls (bottom right) would run into a long map name, so
+   the note moves up to sit on its own row above them. That also lifts it clear of
+   the development badge, so it no longer needs to shift sideways. */
+@media (max-width: 600px) {
+  .mapInfo {
+    bottom: 3.6rem;
+    max-width: calc(100% - 1.5rem);
+  }
 
-/* The area to the right of the sidebar. Its background color comes from the
-   map file, so it is set inline in the component. */
-.stage {
-  position: relative; /* the toolbar and error message are positioned against this */
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  .clearOfDevBadge {
+    left: 0.75rem;
+  }
 }
 
 /* A problem message (a bad file, or a map that could not be loaded) under the
@@ -118,15 +124,10 @@
   outline: 2px solid #e8e1d0;
 }
 
-/* On narrow screens the sidebar becomes a bar across the top. */
-@media (max-width: 760px) {
-  .workspace {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: auto;
-    border-right: none;
-    border-bottom: 1px solid #2a2a2a;
+/* ...and when the toolbar drops to a second row (see Toolbar.module.css), the
+   message goes under it. */
+@media (max-width: 340px) {
+  .errorToast {
+    top: 6.2rem;
   }
 }

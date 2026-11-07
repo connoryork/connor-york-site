@@ -34,19 +34,29 @@ const WHEEL_SPEED = 0.002;
 // A trackpad pinch arrives as wheel events with ctrlKey set and small amounts.
 const PINCH_WHEEL_SPEED = 0.01;
 
-// Pointer movement is in screen pixels, but the view is in map units. The map is
-// 960 units wide and drawn as wide as its element is on screen, so one pixel is
-// 960 / width units. Measuring at the moment of use keeps this right if the window
-// is resized or the layout changes.
+// The map is drawn into an SVG whose coordinate system is "map units" (960 wide).
+// The SVG fills the window but keeps the drawing's proportions, so the drawing is
+// scaled and centered, possibly with an empty strip on two sides. The SVG already
+// knows exactly how to convert between screen pixels and its own units, including
+// that offset: getScreenCTM() is the matrix that maps map units to screen pixels.
+function screenToMapMatrix(element: HTMLElement): DOMMatrix | null {
+  const matrix = element.querySelector("svg")?.getScreenCTM();
+  return matrix ? matrix.inverse() : null;
+}
+
+// How many map units one screen pixel is worth. The matrix scales by `a` pixels per
+// unit, so one pixel is 1 / a units. (Falls back to 1 if there is no SVG yet.)
 function unitsPerPixel(element: HTMLElement): number {
-  return MAP_WIDTH / element.getBoundingClientRect().width;
+  const matrix = element.querySelector("svg")?.getScreenCTM();
+  return matrix ? 1 / matrix.a : 1;
 }
 
 // A screen position (clientX/clientY) as a point in map units inside the frame.
 function toFrame(element: HTMLElement, clientX: number, clientY: number) {
-  const rect = element.getBoundingClientRect();
-  const scale = MAP_WIDTH / rect.width;
-  return { x: (clientX - rect.left) * scale, y: (clientY - rect.top) * scale };
+  const matrix = screenToMapMatrix(element);
+  if (!matrix) return { x: MAP_WIDTH / 2, y: MAP_HEIGHT / 2 };
+  const point = new DOMPoint(clientX, clientY).matrixTransform(matrix);
+  return { x: point.x, y: point.y };
 }
 
 type MapCanvasProps = {

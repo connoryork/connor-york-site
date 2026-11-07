@@ -50,7 +50,10 @@ export default function MapViewer({
       viewBox={`0 0 ${width} ${height}`}
       role="img"
       aria-label={map.name}
-      style={{ width: "100%", height: "auto", background: map.background }}
+      // Fill the space we're given. The drawing keeps its proportions and sits in
+      // the middle (the default "meet" behavior); the leftover strip, if any, is
+      // the same color as the map background, so it simply looks like more map.
+      style={{ display: "block", width: "100%", height: "100%", background: map.background }}
     >
       {/* The "camera": one transform on this group moves everything inside it,
           so panning never has to redraw or recompute any shapes. */}

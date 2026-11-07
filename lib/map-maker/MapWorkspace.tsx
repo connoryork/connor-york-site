@@ -11,6 +11,13 @@ import { parseMapFile, type MapFile } from "./format";
 import { downloadMap } from "./download";
 import type { LibraryEntry } from "./library";
 
+// True only while running `npm run dev`. Next.js draws a small round badge in the
+// bottom-left corner of the window in development (it shows route info), which is
+// where the current-map note sits, so in development only we nudge the note
+// aside. Next.js replaces process.env.NODE_ENV when it builds, so none of this
+// reaches the production site.
+const IS_DEV = process.env.NODE_ENV === "development";
+
 type MapWorkspaceProps = {
   // The built-in maps to list in the sidebar.
   library: LibraryEntry[];
@@ -136,78 +143,73 @@ export default function MapWorkspace({
   }
 
   return (
-    <div className={styles.workspace}>
-      <aside className={styles.sidebar} aria-label="Map controls">
-        <h1 className={styles.brand}>Map Maker</h1>
+    // The whole window is the map. Everything else floats over it.
+    // The map file picks its own background color, so that one value is set
+    // inline; everything else about the layout lives in the CSS module.
+    <main className={styles.workspace} style={{ background: map.background }}>
+      <MapCanvas key={`canvas-${mapKey}`} map={map} hiddenLayers={hiddenLayers} />
 
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Current map</h2>
-          <p className={styles.mapName}>{map.name}</p>
-          <dl className={styles.facts}>
-            <dt>Projection</dt>
-            <dd>{map.projection}</dd>
-            <dt>Layers</dt>
-            <dd>{map.layers.length}</dd>
-          </dl>
-        </section>
-      </aside>
+      {/* Top left: the app's name, small. */}
+      <h1 className={styles.brand}>Map Maker</h1>
 
-      {/* The map file picks its own background color, so this one value is set
-          inline; everything else about the layout lives in the CSS module. */}
-      <main className={styles.stage} style={{ background: map.background }}>
-        <div className={toolbar.toolbar}>
-          <MapPicker
-            library={library}
-            selectedId={selectedId}
-            loadingId={loadingId}
-            onChoose={handleEntryChosen}
+      {/* Bottom left: which map this is. */}
+      <p className={`${styles.mapInfo} ${IS_DEV ? styles.clearOfDevBadge : ""}`}>
+        <span className={styles.mapName}>{map.name}</span>
+        <span className={styles.mapProjection}>{map.projection}</span>
+      </p>
+
+      {/* Top right: the toolbar. */}
+      <div className={toolbar.toolbar}>
+        <MapPicker
+          library={library}
+          selectedId={selectedId}
+          loadingId={loadingId}
+          onChoose={handleEntryChosen}
+        />
+        {/* Keyed like the canvas, so a newly shown map gets a closed panel. */}
+        <LayersPanel
+          key={mapKey}
+          layers={map.layers}
+          hidden={hiddenLayers}
+          onToggle={toggleLayer}
+        />
+        {/* Upload. The real <input> is visually hidden; clicking this label
+            opens the file picker, so the label can look like an icon button.
+            The hidden text gives screen readers a name for it. */}
+        <label className={toolbar.iconButton} title="Open a map file">
+          <UploadIcon />
+          <span className={toolbar.visuallyHidden}>Open a map file</span>
+          <input
+            className={toolbar.visuallyHidden}
+            type="file"
+            accept=".json"
+            onChange={handleFileChosen}
           />
-          {/* Keyed like the canvas, so a newly shown map gets a closed panel. */}
-          <LayersPanel
-            key={mapKey}
-            layers={map.layers}
-            hidden={hiddenLayers}
-            onToggle={toggleLayer}
-          />
-          {/* Upload. The real <input> is visually hidden; clicking this label
-              opens the file picker, so the label can look like an icon button.
-              The hidden text gives screen readers a name for it. */}
-          <label className={toolbar.iconButton} title="Open a map file">
-            <UploadIcon />
-            <span className={toolbar.visuallyHidden}>Open a map file</span>
-            <input
-              className={toolbar.visuallyHidden}
-              type="file"
-              accept=".json"
-              onChange={handleFileChosen}
-            />
-          </label>
+        </label>
+        <button
+          type="button"
+          className={toolbar.iconButton}
+          title="Download map"
+          aria-label="Download map"
+          onClick={() => downloadMap(map)}
+        >
+          <DownloadIcon />
+        </button>
+      </div>
+
+      {error && (
+        <div role="alert" className={styles.errorToast}>
+          <pre className={styles.errorText}>{error}</pre>
           <button
             type="button"
-            className={toolbar.iconButton}
-            title="Download map"
-            aria-label="Download map"
-            onClick={() => downloadMap(map)}
+            className={styles.dismiss}
+            aria-label="Dismiss this message"
+            onClick={() => setError(null)}
           >
-            <DownloadIcon />
+            ×
           </button>
         </div>
-
-        {error && (
-          <div role="alert" className={styles.errorToast}>
-            <pre className={styles.errorText}>{error}</pre>
-            <button
-              type="button"
-              className={styles.dismiss}
-              aria-label="Dismiss this message"
-              onClick={() => setError(null)}
-            >
-              ×
-            </button>
-          </div>
-        )}
-        <MapCanvas key={`canvas-${mapKey}`} map={map} hiddenLayers={hiddenLayers} />
-      </main>
-    </div>
+      )}
+    </main>
   );
 }
