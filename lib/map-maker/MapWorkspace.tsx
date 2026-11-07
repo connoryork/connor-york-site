@@ -1,9 +1,12 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent } from "react";
+import { DownloadIcon, UploadIcon } from "./icons";
 import LayersPanel from "./LayersPanel";
 import MapCanvas from "./MapCanvas";
+import MapPicker from "./MapPicker";
 import styles from "./MapWorkspace.module.css";
+import toolbar from "./Toolbar.module.css";
 import { parseMapFile, type MapFile } from "./format";
 import { downloadMap } from "./download";
 import type { LibraryEntry } from "./library";
@@ -138,32 +141,6 @@ export default function MapWorkspace({
         <h1 className={styles.brand}>Map Maker</h1>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Maps</h2>
-          <ul className={styles.libraryList}>
-            {library.map((entry) => (
-              <li key={entry.id}>
-                <button
-                  type="button"
-                  className={styles.libraryItem}
-                  // aria-current tells screen readers which item is selected.
-                  aria-current={entry.id === selectedId ? "true" : undefined}
-                  disabled={loadingId !== null}
-                  onClick={() => handleEntryChosen(entry)}
-                >
-                  <span className={styles.libraryName}>
-                    {entry.name}
-                    {entry.id === loadingId && " (loading…)"}
-                  </span>
-                  <span className={styles.libraryDescription}>
-                    {entry.description}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Current map</h2>
           <p className={styles.mapName}>{map.name}</p>
           <dl className={styles.facts}>
@@ -173,15 +150,33 @@ export default function MapWorkspace({
             <dd>{map.layers.length}</dd>
           </dl>
         </section>
+      </aside>
 
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>File</h2>
-          {/* The <input> is visually hidden; clicking this label opens the file
-              picker, so we can style it like a button. */}
-          <label className={`${styles.button} ${styles.primary}`}>
-            Open a map file…
+      {/* The map file picks its own background color, so this one value is set
+          inline; everything else about the layout lives in the CSS module. */}
+      <main className={styles.stage} style={{ background: map.background }}>
+        <div className={toolbar.toolbar}>
+          <MapPicker
+            library={library}
+            selectedId={selectedId}
+            loadingId={loadingId}
+            onChoose={handleEntryChosen}
+          />
+          {/* Keyed like the canvas, so a newly shown map gets a closed panel. */}
+          <LayersPanel
+            key={mapKey}
+            layers={map.layers}
+            hidden={hiddenLayers}
+            onToggle={toggleLayer}
+          />
+          {/* Upload. The real <input> is visually hidden; clicking this label
+              opens the file picker, so the label can look like an icon button.
+              The hidden text gives screen readers a name for it. */}
+          <label className={toolbar.iconButton} title="Open a map file">
+            <UploadIcon />
+            <span className={toolbar.visuallyHidden}>Open a map file</span>
             <input
-              className={styles.visuallyHidden}
+              className={toolbar.visuallyHidden}
               type="file"
               accept=".json"
               onChange={handleFileChosen}
@@ -189,29 +184,28 @@ export default function MapWorkspace({
           </label>
           <button
             type="button"
-            className={styles.button}
+            className={toolbar.iconButton}
+            title="Download map"
+            aria-label="Download map"
             onClick={() => downloadMap(map)}
           >
-            Download map
+            <DownloadIcon />
           </button>
-          {error && (
-            <pre role="alert" className={styles.error}>
-              {error}
-            </pre>
-          )}
-        </section>
-      </aside>
+        </div>
 
-      {/* The map file picks its own background color, so this one value is set
-          inline; everything else about the layout lives in the CSS module. */}
-      <main className={styles.stage} style={{ background: map.background }}>
-        {/* Keyed like the canvas, so a newly shown map gets a closed panel. */}
-        <LayersPanel
-          key={mapKey}
-          layers={map.layers}
-          hidden={hiddenLayers}
-          onToggle={toggleLayer}
-        />
+        {error && (
+          <div role="alert" className={styles.errorToast}>
+            <pre className={styles.errorText}>{error}</pre>
+            <button
+              type="button"
+              className={styles.dismiss}
+              aria-label="Dismiss this message"
+              onClick={() => setError(null)}
+            >
+              ×
+            </button>
+          </div>
+        )}
         <MapCanvas key={`canvas-${mapKey}`} map={map} hiddenLayers={hiddenLayers} />
       </main>
     </div>
