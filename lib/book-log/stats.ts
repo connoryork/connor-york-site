@@ -6,42 +6,11 @@ import {
   categoryColor,
   mainCategory,
 } from "./categories";
+import { daysBetween, yearOf } from "@/lib/timeline/dates";
 
-// Dates are ISO "YYYY-MM-DD" strings. Day numbers count days since the Unix
-// epoch in UTC, so date math never trips over time zones or DST.
-const MS_PER_DAY = 86_400_000;
-
-export function dayNumber(iso: string): number {
-  const [y, m, d] = iso.split("-").map(Number);
-  return Date.UTC(y, m - 1, d) / MS_PER_DAY;
-}
-
-export function isoFromDay(day: number): string {
-  return new Date(day * MS_PER_DAY).toISOString().slice(0, 10);
-}
-
-/** Today's date in the viewer's own time zone. */
-export function todayIso(): string {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
-/** The latest date in the log: a stand-in for today where today can't be
- * known, such as while the page is prerendered. */
-export function latestDate(books: Book[]): string {
-  return books
-    .flatMap((b) => [b.began, b.completed ?? b.began])
-    .reduce((a, b) => (a > b ? a : b));
-}
-
-export function yearOf(iso: string): number {
-  return Number(iso.slice(0, 4));
-}
-
-/** Days from start to finish, or to `today` while still reading. */
+/** Days from starting a book to finishing it, or to `today` while reading. */
 export function daysReading(book: Book, today: string): number {
-  return dayNumber(book.completed ?? today) - dayNumber(book.began);
+  return daysBetween(book.began, book.completed, today);
 }
 
 export function bookColor(book: Book): string {
