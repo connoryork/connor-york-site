@@ -1,14 +1,11 @@
-import { Press_Start_2P } from "next/font/google";
-import Link from "next/link";
-import { books } from "./books";
-import Charts from "./Charts";
+import PixelPage from "@/lib/pixel/PixelPage";
 import { latestDate } from "@/lib/timeline/dates";
 import type { TimelineEntry } from "@/lib/timeline/layout";
 import Timeline from "@/lib/timeline/Timeline";
+import { books } from "./books";
+import Charts from "./Charts";
 import { bookColor, legend, shortTitle } from "./stats";
 import styles from "./BookLog.module.css";
-
-const pixelFont = Press_Start_2P({ weight: "400", subsets: ["latin"] });
 
 export default function BookLog() {
   // The page is prerendered, so it can't know today; the latest date in the
@@ -25,15 +22,10 @@ export default function BookLog() {
   const years = books.map((b) => Number(b.began.slice(0, 4)));
 
   return (
-    <div className={`${styles.page} ${pixelFont.className}`}>
-      <header className={styles.header}>
-        <Link href="/" className={styles.back}>
-          &lt; HOME
-        </Link>
-        <h1 className={styles.title}>BOOK LOG</h1>
-        <p className={styles.subtitle}>
-          {books.length} BOOKS, {Math.min(...years)}-{today.slice(0, 4)}. HOVER OR TAP A BRANCH FOR DETAILS.
-        </p>
+    <PixelPage
+      title="BOOK LOG"
+      subtitle={`${books.length} BOOKS, ${Math.min(...years)}-${today.slice(0, 4)}. HOVER OR TAP A BRANCH FOR DETAILS.`}
+      header={
         <ul className={styles.legend}>
           {legend().map((group) => (
             <li key={group.main}>
@@ -48,12 +40,12 @@ export default function BookLog() {
             </li>
           ))}
         </ul>
-      </header>
-
+      }
+    >
       <Timeline entries={entries} fallbackToday={today} ongoingLabel="READING" label="Reading timeline" />
 
       <p className={styles.scrollHint}>STATS BELOW</p>
       <Charts books={books} today={today} />
-    </div>
+    </PixelPage>
   );
 }
