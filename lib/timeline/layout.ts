@@ -1,10 +1,20 @@
-import type { Book } from "./books";
-import { bookColor, dayNumber, isoFromDay, shortTitle } from "./stats";
+import { dayNumber, isoFromDay } from "./dates";
 
 // Geometry for the git-style timeline. Time runs down the page, newest at the
 // top, one calendar day per DAY pixels. The white baseline is a vertical line
-// at BASE_X; each book branches right into a lane when it starts and merges
-// back when it finishes. Everything snaps to a 2px "art pixel" grid.
+// at BASE_X; each entry branches right into a lane when it starts and merges
+// back when it ends. Everything snaps to a 2px "art pixel" grid.
+
+/** One thing on the timeline: a book, a job, a school. */
+export type TimelineEntry = {
+  /** ISO dates; `end` is null while ongoing. */
+  start: string;
+  end: string | null;
+  label: string;
+  color: string;
+  /** Shown as JSON in the entry's hover card. */
+  data: Record<string, unknown>;
+};
 
 export const PIXEL = 2;
 export const DAY = 2 * PIXEL;
@@ -19,15 +29,15 @@ const LABEL_CHARS = 36;
 const CHAR_WIDTH = 8; // the pixel font at 8px is 8px per character
 
 export type Branch = {
-  book: Book;
+  entry: TimelineEntry;
+  /** The entry's position in the list it came from. */
   index: number;
-  color: string;
   lane: number;
   x: number;
   /** y of the start (lower) and end (upper) of the branch. */
   yStart: number;
   yEnd: number;
-  reading: boolean;
+  ongoing: boolean;
   label: string;
   labelY: number;
 };
@@ -48,38 +58,45 @@ export type TimelineLayout = {
 
 const MONTHS = "JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC".split(" ");
 
-export function layoutTimeline(books: Book[], today: string): TimelineLayout {
+/**
+ * Lays out `entries` from their earliest start up to `today`.
+ * `ongoingLabel` marks entries with no end yet, e.g. "READING".
+ */
+export function layoutTimeline(
+  entries: TimelineEntry[],
+  today: string,
+  ongoingLabel: string,
+): TimelineLayout {
   const todayDay = dayNumber(today);
-  const firstDay = Math.min(...books.map((b) => dayNumber(b.began)));
+  const firstDay = Math.min(...entries.map((e) => dayNumber(e.start)));
   const y = (day: number) => PAD_TOP + (todayDay - day) * DAY;
 
-  // Give each book the leftmost lane that's free by the day it starts.
-  // A lane frees up the day after its book finishes, so a branch never
-  // merges and leaves at the same point.
-  const order = books
-    .map((book, index) => ({ book, index }))
-    .sort((a, b) => dayNumber(a.book.began) - dayNumber(b.book.began));
+  // Give each entry the leftmost lane that's free by the day it starts.
+  // A lane frees up the day after its entry ends, so a branch never merges
+  // and leaves at the same point.
+  const order = entries
+    .map((entry, index) => ({ entry, index }))
+    .sort((a, b) => dayNumber(a.entry.start) - dayNumber(b.entry.start));
   const laneFreeAfter: number[] = [];
-  const branches: Branch[] = order.map(({ book, index }) => {
-    const start = dayNumber(book.began);
-    const end = book.completed ? dayNumber(book.completed) : todayDay;
+  const branches: Branch[] = order.map(({ entry, index }) => {
+    const start = dayNumber(entry.start);
+    const end = entry.end ? dayNumber(entry.end) : todayDay;
     let lane = laneFreeAfter.findIndex((free) => free < start);
     if (lane === -1) lane = laneFreeAfter.length;
-    laneFreeAfter[lane] = book.completed ? end : Infinity;
-    const title = shortTitle(book);
-    const reading = book.completed === null;
+    laneFreeAfter[lane] = entry.end ? end : Infinity;
+    const ongoing = entry.end === null;
     const label =
-      (title.length > LABEL_CHARS ? title.slice(0, LABEL_CHARS - 1) + "…" : title) +
-      (reading ? " (READING)" : "");
+      (entry.label.length > LABEL_CHARS
+        ? entry.label.slice(0, LABEL_CHARS - 1) + "…"
+        : entry.label) + (ongoing ? ` (${ongoingLabel})` : "");
     return {
-      book,
+      entry,
       index,
-      color: bookColor(book),
       lane,
       x: BASE_X + (lane + 1) * LANE_GAP,
       yStart: y(start),
       yEnd: y(end),
-      reading,
+      ongoing,
       label,
       labelY: 0,
     };

@@ -2,8 +2,10 @@ import { Press_Start_2P } from "next/font/google";
 import Link from "next/link";
 import { books } from "./books";
 import Charts from "./Charts";
-import Timeline from "./Timeline";
-import { latestDate, legend } from "./stats";
+import { latestDate } from "@/lib/timeline/dates";
+import type { TimelineEntry } from "@/lib/timeline/layout";
+import Timeline from "@/lib/timeline/Timeline";
+import { bookColor, legend, shortTitle } from "./stats";
 import styles from "./BookLog.module.css";
 
 const pixelFont = Press_Start_2P({ weight: "400", subsets: ["latin"] });
@@ -12,7 +14,14 @@ export default function BookLog() {
   // The page is prerendered, so it can't know today; the latest date in the
   // log stands in. The timeline swaps in the viewer's own today once it
   // loads, so the in-progress branch keeps growing.
-  const today = latestDate(books);
+  const today = latestDate(books.flatMap((b) => [b.began, b.completed ?? b.began]));
+  const entries: TimelineEntry[] = books.map((book) => ({
+    start: book.began,
+    end: book.completed,
+    label: shortTitle(book),
+    color: bookColor(book),
+    data: book,
+  }));
   const years = books.map((b) => Number(b.began.slice(0, 4)));
 
   return (
@@ -41,7 +50,7 @@ export default function BookLog() {
         </ul>
       </header>
 
-      <Timeline books={books} fallbackToday={today} />
+      <Timeline entries={entries} fallbackToday={today} ongoingLabel="READING" label="Reading timeline" />
 
       <p className={styles.scrollHint}>STATS BELOW</p>
       <Charts books={books} today={today} />
