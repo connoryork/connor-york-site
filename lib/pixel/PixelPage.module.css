@@ -1,0 +1,71 @@
+/* The shared 8-bit look: PICO-8 colors on black, a pixel font and hard
+   edges. The palette variables are used by every pixel component. */
+
+.page {
+  --black: #000000;
+  --navy: #1d2b53;
+  --gray: #5f574f;
+  --light: #c2c3c7;
+  --white: #fff1e8;
+  --pink: #ff77a8;
+  --peach: #ffccaa;
+  --orange: #ffa300;
+  --lavender: #83769c;
+
+  /* A 4px border with notched corners, drawn as stepped shadows. */
+  --pixel-border:
+    0 -4px 0 0 var(--light),
+    0 4px 0 0 var(--light),
+    -4px 0 0 0 var(--light),
+    4px 0 0 0 var(--light);
+
+  flex: 1;
+  min-height: 100vh;
+  padding: 32px 24px 64px;
+  background: var(--black);
+  color: var(--white);
+  font-size: 8px;
+  line-height: 16px;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  image-rendering: pixelated;
+}
+
+.page ::selection {
+  background: var(--pink);
+  color: var(--black);
+}
+
+/* Header */
+
+.header {
+  max-width: 960px;
+  margin: 0 auto 32px;
+}
+
+.back {
+  color: var(--light);
+}
+
+.back:hover,
+.back:focus-visible {
+  color: var(--pink);
+}
+
+.title {
+  margin: 24px 0 16px;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: normal;
+  text-shadow: 4px 4px 0 var(--pink);
+}
+
+.subtitle {
+  color: var(--light);
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 24px 12px 48px;
+  }
+}

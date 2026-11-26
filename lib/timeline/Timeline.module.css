@@ -71,11 +71,7 @@
   top: 24px;
   height: min(70vh, 600px);
   background: var(--navy);
-  box-shadow:
-    0 -4px 0 0 var(--light),
-    0 4px 0 0 var(--light),
-    -4px 0 0 0 var(--light),
-    4px 0 0 0 var(--light);
+  box-shadow: var(--pixel-border);
   cursor: pointer;
   touch-action: none;
   user-select: none;
