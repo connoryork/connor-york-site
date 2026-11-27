@@ -68,7 +68,7 @@
 
 .minimap {
   position: sticky;
-  top: 24px;
+  top: calc(var(--nav-height) + 24px);
   height: min(70vh, 600px);
   background: var(--navy);
   box-shadow: var(--pixel-border);
