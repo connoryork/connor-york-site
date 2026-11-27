@@ -1,0 +1,39 @@
+/* Tabs stay pinned to the top while the page scrolls. The bar spans the
+   page's padding so nothing shows through at its edges. */
+
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  height: var(--nav-height);
+  margin: 0 -24px 32px;
+  padding: 8px max(24px, calc((100% - 960px) / 2 + 24px)) 0;
+  background: var(--black);
+  border-bottom: 4px solid var(--light);
+}
+
+.tab {
+  padding: 8px 16px;
+  background: var(--navy);
+  color: var(--light);
+}
+
+.tab:hover,
+.tab:focus-visible {
+  color: var(--pink);
+}
+
+.current,
+.current:hover {
+  background: var(--pink);
+  color: var(--black);
+}
+
+@media (max-width: 600px) {
+  .tabs {
+    margin: 0 -12px 24px;
+    padding-inline: 12px;
+  }
+}

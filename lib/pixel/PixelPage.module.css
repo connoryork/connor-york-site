@@ -19,6 +19,10 @@
     -4px 0 0 0 var(--light),
     4px 0 0 0 var(--light);
 
+  /* How much of the top of the screen a pinned nav covers; other sticky
+     things sit below it. */
+  --nav-height: 0px;
+
   flex: 1;
   min-height: 100vh;
   padding: 32px 24px 64px;
@@ -29,6 +33,10 @@
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
   image-rendering: pixelated;
+}
+
+.withNav {
+  --nav-height: 36px;
 }
 
 .page ::selection {
