@@ -60,10 +60,6 @@
   text-shadow: 4px 4px 0 var(--pink);
 }
 
-.subtitle {
-  color: var(--light);
-}
-
 @media (max-width: 600px) {
   .page {
     padding: 24px 12px 48px;

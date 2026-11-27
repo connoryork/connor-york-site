@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import BookLog from "@/lib/book-log/BookLog";
 
 export const metadata: Metadata = {
-  title: "Book log - Connor York",
+  title: "Books - Timelines - Connor York",
   description: "Every book I've read, as a git graph and pixel charts.",
 };
 

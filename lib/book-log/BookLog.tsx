@@ -1,4 +1,3 @@
-import PixelPage from "@/lib/pixel/PixelPage";
 import { latestDate } from "@/lib/timeline/dates";
 import type { TimelineEntry } from "@/lib/timeline/layout";
 import Timeline from "@/lib/timeline/Timeline";
@@ -7,6 +6,7 @@ import Charts from "./Charts";
 import { bookColor, legend, shortTitle } from "./stats";
 import styles from "./BookLog.module.css";
 
+/** Every book I've read: a reading timeline, then charts. */
 export default function BookLog() {
   // The page is prerendered, so it can't know today; the latest date in the
   // log stands in. The timeline swaps in the viewer's own today once it
@@ -22,10 +22,11 @@ export default function BookLog() {
   const years = books.map((b) => Number(b.began.slice(0, 4)));
 
   return (
-    <PixelPage
-      title="BOOK LOG"
-      subtitle={`${books.length} BOOKS, ${Math.min(...years)}-${today.slice(0, 4)}. HOVER OR TAP A BRANCH FOR DETAILS.`}
-      header={
+    <>
+      <div className={styles.intro}>
+        <p>
+          {books.length} BOOKS, {Math.min(...years)}-{today.slice(0, 4)}. HOVER OR TAP A BRANCH FOR DETAILS.
+        </p>
         <ul className={styles.legend}>
           {legend().map((group) => (
             <li key={group.main}>
@@ -40,12 +41,12 @@ export default function BookLog() {
             </li>
           ))}
         </ul>
-      }
-    >
+      </div>
+
       <Timeline entries={entries} fallbackToday={today} ongoingLabel="READING" label="Reading timeline" />
 
       <p className={styles.scrollHint}>STATS BELOW</p>
       <Charts books={books} today={today} />
-    </PixelPage>
+    </>
   );
 }
