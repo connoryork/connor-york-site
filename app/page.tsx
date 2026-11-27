@@ -7,9 +7,9 @@ const projects = [
     description: "draw and explore maps in the browser",
   },
   {
-    href: "/books",
-    name: "Book log",
-    description: "every book I've read, as a git graph and pixel charts",
+    href: "/timelines",
+    name: "Timelines",
+    description: "my reading as a git graph, with pixel charts",
   },
 ];
 

@@ -1,4 +1,10 @@
-/* Book log specifics: the category legend and the statistics charts. */
+/* Book log specifics: the intro and category legend, and the statistics charts. */
+
+.intro {
+  max-width: 960px;
+  margin: 0 auto 32px;
+  color: var(--light);
+}
 
 .legend {
   display: flex;
@@ -10,6 +16,7 @@
 
 .legend li {
   display: flex;
+  color: var(--white);
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
