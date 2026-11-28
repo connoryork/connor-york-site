@@ -6,7 +6,7 @@ import {
   categoryColor,
   mainCategory,
 } from "./categories";
-import { daysBetween, yearOf } from "@/lib/timeline/dates";
+import { daysBetween, yearOf } from "@/lib/dates";
 
 /** Days from starting a book to finishing it, or to `today` while reading. */
 export function daysReading(book: Book, today: string): number {

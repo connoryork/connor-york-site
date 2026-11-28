@@ -1,4 +1,4 @@
-import { dayNumber, isoFromDay } from "./dates";
+import { dayNumber, isoFromDay } from "@/lib/dates";
 
 // Geometry for the git-style timeline. Time runs down the page, newest at the
 // top, one calendar day per DAY pixels. The white baseline is a vertical line

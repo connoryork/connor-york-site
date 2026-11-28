@@ -1,5 +1,5 @@
 import PixelIntro from "@/lib/pixel/PixelIntro";
-import { latestDate } from "@/lib/timeline/dates";
+import { latestDate } from "@/lib/dates";
 import type { TimelineEntry } from "@/lib/timeline/layout";
 import Timeline from "@/lib/timeline/Timeline";
 import { books } from "./books";
