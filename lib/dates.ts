@@ -34,6 +34,3 @@ export function daysBetween(start: string, end: string | null, today: string): n
 export function latestDate(dates: string[]): string {
   return dates.reduce((a, b) => (a > b ? a : b));
 }
-
-/** A month as "YYYY-MM". */
-export const ISO_MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
