@@ -8,6 +8,7 @@ import { timeline } from "../sections/timeline";
 import json from "./data.json";
 
 // My jobs, internships and schooling. data.json holds:
+// - ongoingLabel: marks the timeline branch of a role that hasn't ended.
 // - badges: the Badges Earned shelf (see badgeSchema).
 // - roles: one per role or degree (a promotion is a new role). Jobs and
 //   internships need a title and team, schools a degree; any other fields
@@ -31,6 +32,7 @@ const roleSchema = z
 
 const dataSchema = z
   .object({
+    ongoingLabel: z.string().min(1),
     colors: z.record(z.string(), hexColor),
     badges: z.array(badgeSchema),
     roles: z.array(roleSchema),
@@ -61,7 +63,7 @@ export default defineTab({
       end: (role) => (role.end === null ? null : isoFromDay(dayNumber(`${role.end}-01`) - 1)),
       label: (role) => `${role.org} ${role.kind === "school" ? role.degree : role.team}`,
       color: (role) => data.colors[role.org],
-      ongoingLabel: "CURRENT",
+      ongoingLabel: data.ongoingLabel,
     }),
   ],
 });
