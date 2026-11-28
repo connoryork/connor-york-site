@@ -1,7 +1,7 @@
 // Turns a logo image into the pixel art its badge shows, saved as
 // public/logos/<name>.png. Run it once when adding a logo:
 //
-//   node scripts/pixelate-logo.mjs <image> <name> [colors]
+//   npm run pixelate-logo -- <image> <name> [colors]
 //
 // The image is shrunk to SIZE x SIZE and cut to the badge's round disc. Each
 // pixel snaps to the nearest of the image's `colors` (default 2) most common
@@ -13,7 +13,7 @@ const SIZE = 28; // LOGO_SIZE in lib/pixel/Badge.tsx
 
 const [input, name, colors = "2"] = process.argv.slice(2);
 if (!input || !name) {
-  console.error("usage: node scripts/pixelate-logo.mjs <image> <name> [colors]");
+  console.error("usage: npm run pixelate-logo -- <image> <name> [colors]");
   process.exit(1);
 }
 
