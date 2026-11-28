@@ -1,4 +1,3 @@
-import PixelIntro from "@/lib/pixel/PixelIntro";
 import { isoFromDay, dayNumber, latestDate } from "@/lib/dates";
 import type { TimelineEntry } from "@/lib/timeline/layout";
 import Timeline from "@/lib/timeline/Timeline";
@@ -26,15 +25,9 @@ export default function WorkLog() {
   }));
   // Prerendered pages can't read the clock; see BookLog.
   const today = latestDate(entries.flatMap((e) => [e.start, e.end ?? e.start]));
-  const firstYear = Math.min(...roles.map((r) => Number(r.start.slice(0, 4))));
 
   return (
     <>
-      <PixelIntro>
-        <p>
-          {roles.length} ROLES, {firstYear}-{today.slice(0, 4)}. HOVER OR TAP A BRANCH FOR DETAILS.
-        </p>
-      </PixelIntro>
       <BadgesEarned />
       <Timeline entries={entries} fallbackToday={today} ongoingLabel="CURRENT" label="Work timeline" />
     </>
