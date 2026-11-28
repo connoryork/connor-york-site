@@ -9,7 +9,7 @@ const projects = [
   {
     href: "/timelines",
     name: "Timelines",
-    description: "my reading as a git graph, with pixel charts",
+    description: "my reading and work history as git graphs",
   },
 ];
 
