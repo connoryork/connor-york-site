@@ -19,21 +19,28 @@ All timeline data is JSON, checked by a zod schema when the site builds, so a
 mistake fails the build with a message saying what's wrong.
 
 - **Books:** add an entry to `lib/book-log/books.json`.
-- **Work and school:** add an entry per role or degree to
-  `lib/work/experience.json` (a promotion is a new entry). Its `org` must be
-  listed in `lib/work/orgs.json`.
+- **Work:** edit `lib/tabs/work/data.json`: `roles` (one per role or degree;
+  a promotion is a new role), `badges`, and the `colors` of each org's
+  timeline branches. `lib/tabs/work/tab.ts` says what each field means.
 
-Each org in `lib/work/orgs.json` has a `name` and a `color` (`#rrggbb`) that
-its timeline branches are drawn in.
+### Adding a tab
 
-### Adding a badge
+A tab is a folder in `lib/tabs/` with a JSON data file and a `tab.ts` that
+validates it and lists the tab's sections, top to bottom (see
+`lib/tabs/work/tab.ts`):
 
-The Badges Earned shelf on the work tab comes from `lib/work/badges.json`,
-separate from the timeline. Each badge has a `name`, a `color` (`#rrggbb`)
-for its disc, a `logo` and the month it was `earned` (`YYYY-MM`). Any other
-fields show up in its hover card.
+- `badges(items)`: a Badges Earned shelf. Each badge has a `name`, a `color`
+  (`#rrggbb`) for its disc, a `logo` and the month it was `earned`
+  (`YYYY-MM`); any other fields show up in its hover card.
+- `timeline(items, mapping)`: a git-style timeline. The mapping says how to
+  get each item's start and end dates, label and color.
 
-The logo is pixel art in `public/logos/`. Make it from any logo image (PNG,
+Then add the tab to `lib/tabs/registry.ts`. Its page is
+`/timelines/<slug>` and it appears in the tab bar.
+
+### Badge logos
+
+A badge's logo is pixel art in `public/logos/`. Make it from any logo image (PNG,
 WebP, SVG, JPEG) with:
 
 ```bash
