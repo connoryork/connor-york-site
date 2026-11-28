@@ -1,17 +1,15 @@
-import { existsSync } from "node:fs";
-import path from "node:path";
 import { z } from "zod";
+import { ISO_MONTH } from "@/lib/dates";
+import { parseData } from "@/lib/parseData";
 import experienceJson from "./experience.json";
 import orgsJson from "./orgs.json";
 
 // Work and school history lives in experience.json, one entry per role or
 // degree (a promotion is a new entry). Each entry's org must be listed in
-// orgs.json, which gives it a color and a logo for its badge (a pixel-art
-// image in public/logos/, made with scripts/pixelate-logo.mjs). These schemas check both files when the
-// site builds, so a typo fails the build instead of breaking the page. Fields
-// beyond the required ones are allowed and show up in the hover card.
+// orgs.json, which gives its timeline branches their color. Fields beyond
+// the required ones are allowed and show up in the hover card.
 
-const month = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "expected YYYY-MM");
+const month = z.string().regex(ISO_MONTH, "expected YYYY-MM");
 
 const common = {
   org: z.string().min(1),
@@ -31,25 +29,14 @@ const roleSchema = z
 const orgSchema = z.object({
   name: z.string().min(1),
   color: z.string().regex(/^#[0-9a-f]{6}$/i, "expected a #rrggbb color"),
-  logo: z
-    .string()
-    .refine((file) => existsSync(path.join(process.cwd(), "public/logos", file)), "no such file in public/logos/"),
 });
 
 export type Role = z.infer<typeof roleSchema>;
 export type Org = z.infer<typeof orgSchema>;
 
-function parse<T>(schema: z.ZodType<T>, json: unknown, file: string): T {
-  const result = schema.safeParse(json);
-  if (!result.success) {
-    throw new Error(`lib/work/${file} is invalid:\n${z.prettifyError(result.error)}`);
-  }
-  return result.data;
-}
+export const orgs = parseData(z.array(orgSchema), orgsJson, "lib/work/orgs.json");
 
-export const orgs = parse(z.array(orgSchema), orgsJson, "orgs.json");
-
-export const roles = parse(
+export const roles = parseData(
   z.array(roleSchema).superRefine((list, ctx) => {
     list.forEach((role, i) => {
       if (!orgs.some((o) => o.name === role.org)) {
@@ -58,7 +45,7 @@ export const roles = parse(
     });
   }),
   experienceJson,
-  "experience.json",
+  "lib/work/experience.json",
 );
 
 export function orgOf(role: Role): Org {

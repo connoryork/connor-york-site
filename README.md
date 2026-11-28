@@ -23,10 +23,15 @@ mistake fails the build with a message saying what's wrong.
   `lib/work/experience.json` (a promotion is a new entry). Its `org` must be
   listed in `lib/work/orgs.json`.
 
-### Adding a company or school
+Each org in `lib/work/orgs.json` has a `name` and a `color` (`#rrggbb`) that
+its timeline branches are drawn in.
 
-Each org in `lib/work/orgs.json` has a `name`, a `color` (`#rrggbb`) and a
-`logo`. The color fills its badge and draws its branches on the timeline.
+### Adding a badge
+
+The Badges Earned shelf on the work tab comes from `lib/work/badges.json`,
+separate from the timeline. Each badge has a `name`, a `color` (`#rrggbb`)
+for its disc, a `logo` and the month it was `earned` (`YYYY-MM`). Any other
+fields show up in its hover card.
 
 The logo is pixel art in `public/logos/`. Make it from any logo image (PNG,
 WebP, SVG, JPEG) with:
@@ -35,7 +40,7 @@ WebP, SVG, JPEG) with:
 npm run pixelate-logo -- path/to/logo.png acme
 ```
 
-That writes `public/logos/acme.png`; set `"logo": "acme.png"` in `orgs.json`.
+That writes `public/logos/acme.png`; set `"logo": "acme.png"` on the badge.
 It keeps the logo's 2 most common colors; if it looks flat, pass more:
 
 ```bash
