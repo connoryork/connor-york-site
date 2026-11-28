@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import JsonCard from "@/lib/pixel/JsonCard";
-import { daysBetween, todayIso } from "./dates";
+import { daysBetween, todayIso } from "@/lib/dates";
 import { LINE, NODE, PIXEL, layoutTimeline, type Branch, type TimelineEntry } from "./layout";
 import Minimap from "./Minimap";
 import styles from "./Timeline.module.css";

@@ -1,5 +1,5 @@
 import PixelIntro from "@/lib/pixel/PixelIntro";
-import { isoFromDay, dayNumber, latestDate } from "@/lib/timeline/dates";
+import { isoFromDay, dayNumber, latestDate } from "@/lib/dates";
 import type { TimelineEntry } from "@/lib/timeline/layout";
 import Timeline from "@/lib/timeline/Timeline";
 import BadgesEarned from "./BadgesEarned";
