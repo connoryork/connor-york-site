@@ -6,7 +6,7 @@ import type { TimelineEntry } from "@/lib/timeline/layout";
 const dateOrMonth = z.union([isoDate, isoMonth], { error: "expected YYYY-MM-DD or YYYY-MM" });
 
 /**
- * The shape of one timeline item in a tab's data: its branch's label and
+ * One timeline item: its branch's label and
  * color, and when it started and ended (null while ongoing), each as a day
  * or a month. Any other fields are allowed and show up in its hover card.
  *
@@ -26,10 +26,18 @@ export const timelineItemSchema = z
     path: ["end"],
   });
 
-export type TimelineItem = z.infer<typeof timelineItemSchema>;
+/** A timeline section in a tab.json. */
+export const timelineSectionSchema = z.object({
+  type: z.literal("timeline"),
+  /** Names the timeline for screen readers. */
+  name: z.string().min(1),
+  /** Marks branches that haven't ended, e.g. "CURRENT". */
+  ongoingLabel: z.string().min(1),
+  items: z.array(timelineItemSchema).min(1),
+});
 
 export type TimelineSection = {
-  kind: "timeline";
+  type: "timeline";
   /** Names the timeline for screen readers. */
   name: string;
   entries: TimelineEntry[];
@@ -37,14 +45,8 @@ export type TimelineSection = {
   ongoingLabel: string;
 };
 
-/**
- * A git-style timeline with a branch per item; hovering one shows the item as
- * JSON. `ongoingLabel` marks branches that haven't ended, e.g. "CURRENT".
- */
-export function timeline(
-  items: TimelineItem[],
-  { name, ongoingLabel }: { name: string; ongoingLabel: string },
-): TimelineSection {
+/** A git-style timeline with a branch per item; hovering one shows the item as JSON. */
+export function timeline({ name, ongoingLabel, items }: z.infer<typeof timelineSectionSchema>): TimelineSection {
   const entries = items.map((item) => ({
     start: startDate(item.start),
     end: item.end === null ? null : endDate(item.end),
@@ -53,7 +55,7 @@ export function timeline(
     data: item,
   }));
   return {
-    kind: "timeline",
+    type: "timeline",
     name,
     entries,
     // Prerendered pages can't read the clock, so the latest date in the data

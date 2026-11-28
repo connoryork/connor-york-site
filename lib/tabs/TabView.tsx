@@ -1,6 +1,6 @@
 import BadgeShelf from "@/lib/pixel/BadgeShelf";
 import Timeline from "@/lib/timeline/Timeline";
-import type { Section, Tab } from "./defineTab";
+import type { Section, Tab } from "./tab";
 
 /** Renders a tab's sections, top to bottom. */
 export default function TabView({ tab }: { tab: Tab }) {
@@ -8,7 +8,7 @@ export default function TabView({ tab }: { tab: Tab }) {
 }
 
 function SectionView({ section }: { section: Section }) {
-  switch (section.kind) {
+  switch (section.type) {
     case "badges":
       return <BadgeShelf title={section.title} badges={section.badges} />;
     case "timeline":

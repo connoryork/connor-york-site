@@ -19,24 +19,24 @@ All timeline data is JSON, checked by a zod schema when the site builds, so a
 mistake fails the build with a message saying what's wrong.
 
 - **Books:** add an entry to `lib/book-log/books.json`.
-- **Work:** edit `lib/tabs/work/data.json`: `timelineItems` (one per role
-  or degree; a promotion is a new item), `badges`, and the `ongoingLabel`
-  that marks a role that hasn't ended.
+- **Work:** edit `lib/tabs/work/tab.json`.
 
 ### Adding a tab
 
-A tab is a folder in `lib/tabs/` with a JSON data file and a `tab.ts` that
-validates it and lists the tab's sections, top to bottom (see
-`lib/tabs/work/tab.ts`):
+A tab is a `lib/tabs/<slug>/tab.json` with its tab-bar `label`, a page
+`title` and `description`, and its `sections`, top to bottom. Each section's
+`type` decides what it needs (see `lib/tabs/work/tab.json`):
 
-- `badges(items)`: a Badges Earned shelf. Each badge has a `name`, a `color`
-  (`#rrggbb`) for its disc, a `logo` and the month it was `earned`
-  (`YYYY-MM`); any other fields show up in its hover card.
-- `timeline(items, { name, ongoingLabel })`: a git-style timeline. Each item
-  has a `label` and `color` for its branch, and a `start` and `end` (null
-  while ongoing), each a day (`YYYY-MM-DD`) or a month (`YYYY-MM`); any
-  other fields show up in its hover card.
+- `"badges"`: a Badges Earned shelf (optional `title`). Each of its `items`
+  has a `name`, a `color` (`#rrggbb`) for its disc, a `logo` and the month
+  it was `earned` (`YYYY-MM`).
+- `"timeline"`: a git-style timeline with a screen-reader `name` and an
+  `ongoingLabel` (e.g. `"CURRENT"`) for branches that haven't ended. Each of
+  its `items` has a `label` and `color` for its branch, and a `start` and
+  `end` (null while ongoing), each a day (`YYYY-MM-DD`) or a month
+  (`YYYY-MM`).
 
+Items can have any other fields; they show up in the item's hover card.
 Then add the tab to `lib/tabs/registry.ts`. Its page is
 `/timelines/<slug>` and it appears in the tab bar.
 
