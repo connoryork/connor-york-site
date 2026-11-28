@@ -1,9 +1,7 @@
+import { BADGE_SIZE, LOGO_SIZE, RING } from "./badgeSize";
+
 // A badge is a pixel circle: a disc in the badge's color with its logo on
-// top, inside a stepped ring of trim. Sizes are in art pixels.
-const BADGE_SIZE = 32;
-const RING = 2;
-/** Logos are this many pixels square; see scripts/pixelate-logo.mjs. */
-export const LOGO_SIZE = BADGE_SIZE - 2 * RING;
+// top, inside a stepped ring of trim.
 
 /** A round pixel-art badge. `logo` is the URL of a LOGO_SIZE-square image. */
 export default function Badge({ logo, color, trim }: { logo: string; color: string; trim: string }) {

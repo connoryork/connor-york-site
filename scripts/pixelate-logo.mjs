@@ -8,8 +8,7 @@
 // colors, so edges stay crisp instead of blending. Touch up the result by
 // hand in any pixel editor if needed.
 import sharp from "sharp";
-
-const SIZE = 28; // LOGO_SIZE in lib/pixel/Badge.tsx
+import { LOGO_SIZE as SIZE } from "../lib/pixel/badgeSize.ts";
 
 const [input, name, colors = "2"] = process.argv.slice(2);
 if (!input || !name) {
