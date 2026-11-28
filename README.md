@@ -37,8 +37,8 @@ A tab is a `lib/tabs/<slug>/tab.json` with its tab-bar `label`, a page
   (`YYYY-MM`).
 
 Items can have any other fields; they show up in the item's hover card.
-Then add the tab to `lib/tabs/registry.ts`. Its page is
-`/timelines/<slug>` and it appears in the tab bar.
+That's all: the site finds every `tab.json` when it builds. The tab's page is
+`/timelines/<slug>`, and tabs appear in the tab bar in folder-name order.
 
 ### Badge logos
 
