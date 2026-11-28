@@ -19,9 +19,9 @@ All timeline data is JSON, checked by a zod schema when the site builds, so a
 mistake fails the build with a message saying what's wrong.
 
 - **Books:** add an entry to `lib/book-log/books.json`.
-- **Work:** edit `lib/tabs/work/data.json`: `roles` (one per role or degree;
-  a promotion is a new role), `badges`, and the `colors` of each org's
-  timeline branches. `lib/tabs/work/tab.ts` says what each field means.
+- **Work:** edit `lib/tabs/work/data.json`: `timelineItems` (one per role
+  or degree; a promotion is a new item), `badges`, and the `ongoingLabel`
+  that marks a role that hasn't ended.
 
 ### Adding a tab
 
@@ -32,8 +32,10 @@ validates it and lists the tab's sections, top to bottom (see
 - `badges(items)`: a Badges Earned shelf. Each badge has a `name`, a `color`
   (`#rrggbb`) for its disc, a `logo` and the month it was `earned`
   (`YYYY-MM`); any other fields show up in its hover card.
-- `timeline(items, mapping)`: a git-style timeline. The mapping says how to
-  get each item's start and end dates, label and color.
+- `timeline(items, { name, ongoingLabel })`: a git-style timeline. Each item
+  has a `label` and `color` for its branch, and a `start` and `end` (null
+  while ongoing), each a day (`YYYY-MM-DD`) or a month (`YYYY-MM`); any
+  other fields show up in its hover card.
 
 Then add the tab to `lib/tabs/registry.ts`. Its page is
 `/timelines/<slug>` and it appears in the tab bar.
