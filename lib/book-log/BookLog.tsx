@@ -1,3 +1,4 @@
+import PixelIntro from "@/lib/pixel/PixelIntro";
 import { latestDate } from "@/lib/timeline/dates";
 import type { TimelineEntry } from "@/lib/timeline/layout";
 import Timeline from "@/lib/timeline/Timeline";
@@ -23,7 +24,7 @@ export default function BookLog() {
 
   return (
     <>
-      <div className={styles.intro}>
+      <PixelIntro>
         <p>
           {books.length} BOOKS, {Math.min(...years)}-{today.slice(0, 4)}. HOVER OR TAP A BRANCH FOR DETAILS.
         </p>
@@ -41,7 +42,7 @@ export default function BookLog() {
             </li>
           ))}
         </ul>
-      </div>
+      </PixelIntro>
 
       <Timeline entries={entries} fallbackToday={today} ongoingLabel="READING" label="Reading timeline" />
 
