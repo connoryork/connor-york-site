@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseData } from "@/lib/parseData";
 import { Category } from "./categories";
 import booksJson from "./books.json";
 
@@ -28,12 +29,4 @@ const bookSchema = z
 
 export type Book = z.infer<typeof bookSchema>;
 
-function parseBooks(json: unknown): Book[] {
-  const result = z.array(bookSchema).safeParse(json);
-  if (!result.success) {
-    throw new Error(`lib/book-log/books.json is invalid:\n${z.prettifyError(result.error)}`);
-  }
-  return result.data;
-}
-
-export const books = parseBooks(booksJson);
+export const books = parseData(z.array(bookSchema), booksJson, "lib/book-log/books.json");
