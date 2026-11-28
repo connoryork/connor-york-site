@@ -3,14 +3,14 @@
 import { useState } from "react";
 import Badge from "./Badge";
 import JsonCard from "./JsonCard";
-import type { PixelGrid } from "./pixelate";
 import styles from "./BadgeShelf.module.css";
 
 export type BadgeData = {
   name: string;
   caption: string;
   color: string;
-  logo: PixelGrid;
+  /** URL of the badge's pixel-art logo. */
+  logo: string;
   /** Shown as JSON in the badge's hover card. */
   data: Record<string, unknown>;
 };
