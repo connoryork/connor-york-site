@@ -2,6 +2,7 @@ import PixelIntro from "@/lib/pixel/PixelIntro";
 import { isoFromDay, dayNumber, latestDate } from "@/lib/timeline/dates";
 import type { TimelineEntry } from "@/lib/timeline/layout";
 import Timeline from "@/lib/timeline/Timeline";
+import BadgesEarned from "./BadgesEarned";
 import { orgOf, roles, type Role } from "./experience";
 
 // Roles are dated by month. One starts on the 1st of its first month and ends
@@ -14,7 +15,7 @@ function label(role: Role): string {
   return `${role.org} ${role.kind === "school" ? role.degree : role.team}`;
 }
 
-/** My jobs, internships and schooling as a timeline. */
+/** My jobs, internships and schooling: a badge for each place, then a timeline. */
 export default function WorkLog() {
   const entries: TimelineEntry[] = roles.map((role) => ({
     start: startDate(role.start),
@@ -34,6 +35,7 @@ export default function WorkLog() {
           {roles.length} ROLES, {firstYear}-{today.slice(0, 4)}. HOVER OR TAP A BRANCH FOR DETAILS.
         </p>
       </PixelIntro>
+      <BadgesEarned />
       <Timeline entries={entries} fallbackToday={today} ongoingLabel="CURRENT" label="Work timeline" />
     </>
   );

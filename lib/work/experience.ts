@@ -1,10 +1,13 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { z } from "zod";
 import experienceJson from "./experience.json";
 import orgsJson from "./orgs.json";
 
 // Work and school history lives in experience.json, one entry per role or
 // degree (a promotion is a new entry). Each entry's org must be listed in
-// orgs.json, which gives it a color. These schemas check both files when the
+// orgs.json, which gives it a color and a logo (an image in lib/work/logos/,
+// pixelated for its badge). These schemas check both files when the
 // site builds, so a typo fails the build instead of breaking the page. Fields
 // beyond the required ones are allowed and show up in the hover card.
 
@@ -28,6 +31,9 @@ const roleSchema = z
 const orgSchema = z.object({
   name: z.string().min(1),
   color: z.string().regex(/^#[0-9a-f]{6}$/i, "expected a #rrggbb color"),
+  logo: z.string().refine((file) => existsSync(logoPath(file)), "no such file in lib/work/logos/"),
+  /** How many of the logo's colors its pixel version keeps. */
+  logoColors: z.number().int().min(1).max(16).default(2),
 });
 
 export type Role = z.infer<typeof roleSchema>;
@@ -54,6 +60,10 @@ export const roles = parse(
   experienceJson,
   "experience.json",
 );
+
+export function logoPath(file: string): string {
+  return path.join(process.cwd(), "lib/work/logos", file);
+}
 
 export function orgOf(role: Role): Org {
   return orgs.find((o) => o.name === role.org)!;
